@@ -7,8 +7,8 @@
   --color-card-bg: #ffffff;
   
   --color-text-primary: #1a1a1a;
-  --color-text-secondary: #64748b;
-  --color-text-muted: #94a3b8;
+  --color-text-secondary: #334155; /* より濃い色に変更 */
+  --color-text-muted: #475569;      /* より濃い色に変更 */
   
   --color-accent: #334155;
   --color-accent-hover: #1e293b;
