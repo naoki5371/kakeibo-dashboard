@@ -171,60 +171,60 @@ export function Dashboard({
         </div>
 
         <div className="summary-cards single-card">
-        <div className="summary-card expense-primary animate-fade-in">
-          <div className="summary-card-icon">
-            <TrendingDown size={32} />
-          </div>
-          <div className="summary-card-content">
-            <span className="summary-card-label">{isCurrentMonth ? '今月' : monthLabel}の総支出</span>
-            <span className="summary-card-value amount-expense-large">
-              {formatCurrency(selectedMonthSummary.expense)}
-            </span>
-          </div>
-          <div className="summary-card-stats">
-            <div className="stat-item">
-              <CreditCard size={16} />
-              <span>{expenses.filter(e => format(new Date(e.expenseDate), 'yyyy-MM') === format(selectedMonth, 'yyyy-MM')).length} 件の取引</span>
+          <div className="summary-card expense-primary animate-fade-in">
+            <div className="summary-card-icon">
+              <TrendingDown size={32} />
+            </div>
+            <div className="summary-card-content">
+              <span className="summary-card-label">{isCurrentMonth ? '今月' : monthLabel}の総支出</span>
+              <span className="summary-card-value amount-expense-large">
+                {formatCurrency(selectedMonthSummary.expense)}
+              </span>
+            </div>
+            <div className="summary-card-stats hide-on-pdf">
+              <div className="stat-item">
+                <CreditCard size={16} />
+                <span>{expenses.filter(e => format(new Date(e.expenseDate), 'yyyy-MM') === format(selectedMonth, 'yyyy-MM')).length} 件の取引</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="dashboard-grid">
-        <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-          <YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} />
-        </div>
+        <div className="dashboard-grid">
+          <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+            <YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} />
+          </div>
 
-        {/* 年間カテゴリ分析（新規追加） */}
-        <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
-          <CategoryPieChart 
-            data={yearlyCategoryData} 
-            title={`${selectedYear}年の年間カテゴリ別支出`}
-          />
-        </div>
+          <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
+            <CategoryPieChart 
+              data={yearlyCategoryData} 
+              title={`${selectedYear}年の年間カテゴリ別支出`}
+            />
+          </div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-          <MonthlyChart data={monthlyData} />
-        </div>
+          <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+            <MonthlyChart data={monthlyData} />
+          </div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
-          <CategoryPieChart data={categoryData} title={`${isCurrentMonth ? '今月' : monthLabel}のカテゴリ別支出`} />
-        </div>
+          <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <CategoryPieChart data={categoryData} title={`${isCurrentMonth ? '今月' : monthLabel}のカテゴリ別支出`} />
+          </div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-          <SpendingRanking data={spendingRanking} title={`${isCurrentMonth ? '今月' : monthLabel}の支出TOP5`} />
-        </div>
+          <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
+            <SpendingRanking data={spendingRanking} title={`${isCurrentMonth ? '今月' : monthLabel}の支出TOP5`} />
+          </div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
-          <MonthComparison data={monthComparisonData} currentMonthLabel={monthLabel} previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} />
-        </div>
+          <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
+            <MonthComparison data={monthComparisonData} currentMonthLabel={monthLabel} previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} />
+          </div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
-          <RecentTransactions data={recentTransactions} />
-        </div>
+          <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
+            <RecentTransactions data={recentTransactions} />
+          </div>
 
-        <div className="animate-fade-in" style={{ animationDelay: '700ms' }}>
-          <MonthlyTrend data={trendData} />
+          <div className="animate-fade-in" style={{ animationDelay: '700ms' }}>
+            <MonthlyTrend data={trendData} />
+          </div>
         </div>
       </div>
 
