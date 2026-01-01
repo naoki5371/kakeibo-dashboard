@@ -8,22 +8,41 @@ import type {
   TrendData,
 } from '../types';
 
-// カテゴリごとの色を定義
+// カテゴリごとの色を定義（ユーザー定義の14カテゴリ）
 const CATEGORY_COLORS: Record<string, string> = {
-  '食費': '#FF6B6B',
-  '日用品': '#4ECDC4',
-  '交通費': '#45B7D1',
-  '光熱費': '#96CEB4',
-  '通信費': '#FFEAA7',
-  '医療費': '#DDA0DD',
-  '娯楽': '#98D8C8',
-  '衣服': '#F7DC6F',
-  '教育': '#BB8FCE',
-  '住居費': '#85C1E9',
-  '保険': '#F8B500',
-  '税金': '#E74C3C',
-  'その他': '#95A5A6',
+  '01 食費': '#FF6B6B',
+  '02 生活品': '#4ECDC4',
+  '03 光熱費': '#45B7D1',
+  '04 通信費': '#96CEB4',
+  '05 被服費': '#FFEAA7',
+  '06 美容費': '#DDA0DD',
+  '07 交通費・車両費': '#98D8C8',
+  '08 住宅ローン・家賃': '#F7DC6F',
+  '09 教育費': '#BB8FCE',
+  '10 習いごと': '#85C1E9',
+  '11 医療費': '#F8B500',
+  '12 娯楽・交際費': '#E74C3C',
+  '13 保険料': '#95A5A6',
+  '14 臨時出費': '#58D68D',
 };
+
+// カテゴリのマスターリスト（表示順を固定するため）
+const CATEGORY_MASTER = [
+  '01 食費',
+  '02 生活品',
+  '03 光熱費',
+  '04 通信費',
+  '05 被服費',
+  '06 美容費',
+  '07 交通費・車両費',
+  '08 住宅ローン・家賃',
+  '09 教育費',
+  '10 習いごと',
+  '11 医療費',
+  '12 娯楽・交際費',
+  '13 保険料',
+  '14 臨時出費',
+];
 
 const DEFAULT_COLORS = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
@@ -82,12 +101,10 @@ export function calculateCategoryData(
   expenses: ExpenseRecord[],
   targetMonth?: Date
 ): CategoryData[] {
-  // 全データから存在するすべてのカテゴリを抽出（マスターリスト作成）
-  const allCategories = Array.from(new Set(expenses.map(e => e.category))).sort();
-  
   const categoryMap = new Map<string, number>();
-  // すべてのカテゴリを0円で初期化
-  allCategories.forEach(cat => {
+  
+  // マスターリストのすべてのカテゴリを0円で初期化
+  CATEGORY_MASTER.forEach(cat => {
     categoryMap.set(cat, 0);
   });
   
@@ -106,25 +123,18 @@ export function calculateCategoryData(
   
   const total = Array.from(categoryMap.values()).reduce((sum, val) => sum + val, 0);
   
-  let colorIndex = 0;
-  return Array.from(categoryMap.entries())
-    .sort((a, b) => {
-      // 金額があるものを優先、その後はカテゴリ名順
-      if (b[1] !== a[1]) return b[1] - a[1];
-      return a[0].localeCompare(b[0]);
-    })
-    .map(([category, amount]) => {
-      // 色の決定（01 食費 などの場合、数字を除いた名前で色を探す）
-      const cleanName = category.replace(/^\d+[\s　._-]*/, '');
-      const color = CATEGORY_COLORS[category] || CATEGORY_COLORS[cleanName] || DEFAULT_COLORS[colorIndex++ % DEFAULT_COLORS.length];
-      
-      return {
-        category,
-        amount,
-        percentage: total > 0 ? (amount / total) * 100 : 0,
-        color,
-      };
-    });
+  // マスターリストの順番（01〜14）を維持して配列に変換
+  return CATEGORY_MASTER.map((category) => {
+    const amount = categoryMap.get(category) || 0;
+    const color = CATEGORY_COLORS[category] || '#95A5A6';
+    
+    return {
+      category,
+      amount,
+      percentage: total > 0 ? (amount / total) * 100 : 0,
+      color,
+    };
+  });
 }
 
 // 前月比較データを計算
