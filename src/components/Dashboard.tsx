@@ -56,16 +56,18 @@ export function Dashboard({
     const fileName = `${format(now, 'yyyy.MM.dd')}家計簿ダッシュボード.pdf`;
     
     const opt = {
-      margin: [10, 10] as [number, number],
+      margin: [10, 10, 10, 10] as [number, number, number, number],
       filename: fileName,
       image: { type: 'jpeg' as const, quality: 0.98 },
       html2canvas: { 
         scale: 2, 
         useCORS: true,
         letterRendering: true,
-        logging: false
+        backgroundColor: '#f8fafc',
+        scrollY: 0,
+        windowWidth: 1200 // 出力時の仮想的なウィンドウ幅を固定して崩れを防ぐ
       },
-      jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
     };
 
     try {
@@ -165,7 +167,7 @@ export function Dashboard({
         </div>
       </div>
 
-      <div ref={dashboardRef} className="dashboard-content-to-export">
+      <div ref={dashboardRef} className={`dashboard-content-to-export ${isExporting ? 'pdf-export-mode' : ''}`}>
         <div className="month-selector-container hide-on-pdf">
           <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
         </div>
@@ -244,6 +246,10 @@ export function Dashboard({
         }
         
         .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); }
+        
+        .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 20px !important; margin: 0 auto !important; }
+        .pdf-export-mode .dashboard-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; page-break-inside: avoid; }
         
         .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
