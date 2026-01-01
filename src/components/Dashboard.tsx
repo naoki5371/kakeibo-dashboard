@@ -249,7 +249,7 @@ export function Dashboard({
         </div>
 
         {/* カテゴリ別・月別一覧表（新規追加） */}
-        <div className="animate-fade-in" style={{ animationDelay: '800ms', marginTop: '32px' }}>
+        <div style={{ marginTop: '48px' }}>
           <CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} />
         </div>
       </div>
@@ -278,6 +278,10 @@ export function Dashboard({
         .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
         .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
         .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
+        .pdf-export-mode .table-container { overflow: visible !important; width: 100% !important; }
+        .pdf-export-mode .analysis-table { font-size: 0.7rem !important; }
+        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { padding: 6px 4px !important; min-width: auto !important; }
+        .pdf-export-mode .sticky-col { position: static !important; border-right: 1px solid #e2e8f0 !important; min-width: 100px !important; }
         
         .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
