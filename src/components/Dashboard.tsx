@@ -10,7 +10,6 @@ import {
   calculateCategoryData,
   calculateMonthComparison,
   getSpendingRanking,
-  calculateMonthlyTrend,
   getRecentTransactions,
   calculateYearlySummary,
   calculateYearlyCategoryData,
