@@ -52,20 +52,22 @@ export function Dashboard({
     
     const element = dashboardRef.current;
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
-    const width = 1800; // PDFの幅を特大に拡大
-    const height = element.scrollHeight + 100;
+    const width = 2000; // 超特大の幅を確保
+    const height = element.scrollHeight + 150;
     
     const opt = {
       margin: 0,
       filename: fileName,
       image: { type: 'jpeg' as const, quality: 1.0 },
       html2canvas: { 
-        scale: 2, 
+        scale: 1.5, // スケールを少し下げて安定させる
         useCORS: true,
         letterRendering: true,
         backgroundColor: '#fafafa',
-        windowWidth: 1800, // ウィンドウ幅も特大に
-        scrollY: 0
+        windowWidth: 2000, // 仮想ウィンドウを巨大にする
+        width: 2000, // キャプチャ範囲を巨大にする
+        scrollY: 0,
+        x: 0
       },
       jsPDF: { 
         unit: 'px' as const, 
@@ -75,6 +77,7 @@ export function Dashboard({
     };
 
     try {
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 待機時間をさらに長く
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error('PDF export failed:', error);
@@ -253,19 +256,31 @@ export function Dashboard({
         .pdf-export-mode .recharts-text { fill: #000000 !important; font-weight: 500 !important; }
         .pdf-export-mode .recharts-legend-item-text { color: #000000 !important; font-weight: 500 !important; }
         
-        /* 表の見切れ対策 - 徹底強化 */
-        .pdf-export-mode .table-wrapper { border: none !important; width: 1700px !important; }
-        .pdf-export-mode .table-container { overflow: visible !important; width: 1700px !important; }
-        .pdf-export-mode .analysis-table { table-layout: fixed !important; width: 1700px !important; border: 1px solid #000000 !important; }
+        /* 表の見切れ対策 - 究極の強制設定 */
+        .pdf-export-mode .table-wrapper { border: none !important; width: 1800px !important; margin: 0 !important; padding: 0 !important; }
+        .pdf-export-mode .table-container { overflow: visible !important; width: 1800px !important; }
+        .pdf-export-mode .analysis-table { 
+          table-layout: fixed !important; 
+          width: 1800px !important; 
+          min-width: 1800px !important; 
+          border: 1px solid #000000 !important; 
+        }
         .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { 
           border: 1px solid #000000 !important; 
-          padding: 6px 2px !important; 
-          font-size: 8.5px !important; 
+          padding: 8px 4px !important; 
+          font-size: 11px !important; 
         }
-        .pdf-export-mode .sticky-col { position: static !important; width: 90px !important; min-width: 90px !important; border-right: 1px solid #000000 !important; }
-        .pdf-export-mode .month-col { width: 95px !important; min-width: 95px !important; }
-        .pdf-export-mode .total-col, .pdf-export-mode .total-cell { width: 110px !important; min-width: 110px !important; background: #f1f5f9 !important; }
-        .pdf-export-mode .grand-total-row td { border-top: 1.5px solid #000000 !important; }
+        .pdf-export-mode .sticky-col { position: static !important; width: 180px !important; min-width: 180px !important; border-right: 1px solid #000000 !important; }
+        .pdf-export-mode .month-col { width: 120px !important; min-width: 120px !important; text-align: center !important; }
+        .pdf-export-mode .total-col, .pdf-export-mode .total-cell { 
+          width: 160px !important; 
+          min-width: 160px !important; 
+          background: #f1f5f9 !important; 
+          text-align: right !important;
+          visibility: visible !important;
+          display: table-cell !important;
+        }
+        .pdf-export-mode .grand-total-row td { border-top: 2px solid #000000 !important; }
         
         /* カテゴリリストの見切れ対策 */
         .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
