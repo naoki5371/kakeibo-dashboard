@@ -239,7 +239,7 @@ export function Dashboard({
         
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
 
-        .pdf-export-mode { background: #fafafa !important; width: 1500px !important; padding: 80px !important; margin: 0 !important; }
+        .pdf-export-mode { background: #fafafa !important; width: 1900px !important; padding: 60px 50px !important; margin: 0 !important; }
         .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 56px !important; }
         .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 0 !important; }
         .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; background: #334155 !important; }
@@ -256,31 +256,38 @@ export function Dashboard({
         .pdf-export-mode .recharts-text { fill: #000000 !important; font-weight: 500 !important; }
         .pdf-export-mode .recharts-legend-item-text { color: #000000 !important; font-weight: 500 !important; }
         
-        /* 表の見切れ対策 - 究極の強制設定 */
-        .pdf-export-mode .table-wrapper { border: none !important; width: 1800px !important; margin: 0 !important; padding: 0 !important; }
+        /* 表のレイアウト改善 */
+        .pdf-export-mode .category-monthly-table { width: 1800px !important; }
+        .pdf-export-mode .table-wrapper { border: 1px solid #e2e8f0 !important; width: 1800px !important; margin: 24px 0 !important; border-radius: 8px !important; overflow: hidden !important; }
         .pdf-export-mode .table-container { overflow: visible !important; width: 1800px !important; }
         .pdf-export-mode .analysis-table { 
           table-layout: fixed !important; 
           width: 1800px !important; 
-          min-width: 1800px !important; 
-          border: 1px solid #000000 !important; 
+          border-collapse: collapse !important;
         }
         .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { 
-          border: 1px solid #000000 !important; 
-          padding: 8px 4px !important; 
+          border: 1px solid #cbd5e1 !important; 
+          padding: 10px 6px !important; 
           font-size: 11px !important; 
+          text-align: center !important;
         }
-        .pdf-export-mode .sticky-col { position: static !important; width: 180px !important; min-width: 180px !important; border-right: 1px solid #000000 !important; }
-        .pdf-export-mode .month-col { width: 120px !important; min-width: 120px !important; text-align: center !important; }
+        .pdf-export-mode .analysis-table th { background: #f8fafc !important; font-weight: 600 !important; }
+        .pdf-export-mode .sticky-col { position: static !important; width: 140px !important; min-width: 140px !important; text-align: left !important; padding-left: 12px !important; }
+        .pdf-export-mode .month-col { width: 115px !important; min-width: 115px !important; }
         .pdf-export-mode .total-col, .pdf-export-mode .total-cell { 
-          width: 160px !important; 
-          min-width: 160px !important; 
+          width: 130px !important; 
+          min-width: 130px !important; 
           background: #f1f5f9 !important; 
+          font-weight: 700 !important;
           text-align: right !important;
-          visibility: visible !important;
-          display: table-cell !important;
+          padding-right: 12px !important;
         }
-        .pdf-export-mode .grand-total-row td { border-top: 2px solid #000000 !important; }
+        .pdf-export-mode .grand-total-row td { 
+          border-top: 2px solid #334155 !important; 
+          background: #f1f5f9 !important;
+          font-weight: 700 !important;
+        }
+        .pdf-export-mode .total-label-cell { font-weight: 700 !important; }
         
         /* カテゴリリストの見切れ対策 */
         .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
