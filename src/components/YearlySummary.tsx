@@ -1,9 +1,9 @@
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
-import type { YearlySummary as YearlySummaryType } from '../types';
+import type { YearlySummary } from '../types';
 import { formatCurrency } from '../utils/dataProcessor';
 
 interface YearlySummaryProps {
-  data: YearlySummaryType;
+  data: YearlySummary;
   year: number;
   onYearChange: (year: number) => void;
 }

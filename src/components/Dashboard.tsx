@@ -14,7 +14,6 @@ import {
   calculateYearlySummary,
   calculateYearlyCategoryData,
   calculateCategoryMonthlyTable,
-  formatCurrency,
 } from '../utils/dataProcessor';
 import { MonthlyChart } from './MonthlyChart';
 import { CategoryPieChart } from './CategoryPieChart';

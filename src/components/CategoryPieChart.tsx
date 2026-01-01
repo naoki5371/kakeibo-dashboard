@@ -81,7 +81,7 @@ export function CategoryPieChart({ data, title = 'カテゴリ別支出' }: Cate
                 stroke="none"
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} cornerRadius={4} />
+                  <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />

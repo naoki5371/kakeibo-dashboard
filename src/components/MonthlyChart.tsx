@@ -41,7 +41,7 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
                 boxShadow: 'var(--shadow-lg)',
                 padding: '12px 16px'
               }}
-              formatter={(value: number) => [formatCurrency(value), '支出']}
+              formatter={(value: any) => [formatCurrency(value), '支出']}
               labelStyle={{ fontWeight: 700, marginBottom: '8px', color: 'var(--color-text-primary)' }}
             />
             <Bar 
@@ -50,7 +50,7 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
               radius={[6, 6, 0, 0]} 
               barSize={32}
             >
-              {data.map((entry, index) => (
+              {data.map((_, index) => (
                 <Cell 
                   key={`cell-${index}`} 
                   fill={index === data.length - 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'} 
