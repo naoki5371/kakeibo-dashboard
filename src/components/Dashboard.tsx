@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
-import { RefreshCw, AlertCircle, TrendingDown, CreditCard } from 'lucide-react';
+import { useMemo, useState, useRef } from 'react';
+import { RefreshCw, AlertCircle, TrendingDown, CreditCard, Download } from 'lucide-react';
 import { format, startOfMonth, subMonths } from 'date-fns';
 import { ja } from 'date-fns/locale';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 import type { ExpenseRecord } from '../types';
 import {
   calculateMonthlyData,
@@ -38,8 +40,43 @@ export function Dashboard({
   lastUpdated,
   onRefresh,
 }: DashboardProps) {
+  const dashboardRef = useRef<HTMLDivElement>(null);
   const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
   const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
+  const [isExporting, setIsExporting] = useState(false);
+
+  // PDF出力処理
+  const handleExportPDF = async () => {
+    if (!dashboardRef.current) return;
+    
+    setIsExporting(true);
+    
+    const element = dashboardRef.current;
+    const now = new Date();
+    const fileName = `${format(now, 'yyyy.MM.dd')}家計簿ダッシュボード.pdf`;
+    
+    const opt = {
+      margin: [10, 10],
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 2, 
+        useCORS: true,
+        letterRendering: true,
+        logging: false
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    try {
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      alert('PDFの出力に失敗しました。');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const monthlyData = useMemo(
     () => calculateMonthlyData(expenses, 12),
@@ -112,17 +149,28 @@ export function Dashboard({
             <span className="last-updated">最終更新: {lastUpdated.toLocaleTimeString('ja-JP')}</span>
           )}
         </div>
-        <button className="btn btn-secondary refresh-btn" onClick={onRefresh} disabled={loading}>
-          <RefreshCw size={18} className={loading ? 'spinning' : ''} />
-          {loading ? '更新中...' : 'データを更新'}
-        </button>
+        <div className="dashboard-actions">
+          <button 
+            className="btn btn-secondary pdf-btn" 
+            onClick={handleExportPDF} 
+            disabled={loading || isExporting}
+          >
+            <Download size={18} className={isExporting ? 'animate-pulse' : ''} />
+            {isExporting ? '出力中...' : 'PDFを出力'}
+          </button>
+          <button className="btn btn-secondary refresh-btn" onClick={onRefresh} disabled={loading || isExporting}>
+            <RefreshCw size={18} className={loading ? 'spinning' : ''} />
+            {loading ? '更新中...' : 'データを更新'}
+          </button>
+        </div>
       </div>
 
-      <div className="month-selector-container">
-        <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
-      </div>
+      <div ref={dashboardRef} className="dashboard-content-to-export">
+        <div className="month-selector-container hide-on-pdf">
+          <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
+        </div>
 
-      <div className="summary-cards single-card">
+        <div className="summary-cards single-card">
         <div className="summary-card expense-primary animate-fade-in">
           <div className="summary-card-icon">
             <TrendingDown size={32} />
@@ -185,7 +233,17 @@ export function Dashboard({
         .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
         .dashboard-title { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); }
         .last-updated { font-size: 0.8rem; color: var(--color-text-muted); }
+        .dashboard-actions { display: flex; gap: 12px; align-items: center; }
+        .pdf-btn:hover { border-color: var(--color-accent-secondary); color: var(--color-accent-secondary); }
+        
         .month-selector-container { margin-bottom: 32px; }
+        
+        /* PDF出力時のスタイル調整 */
+        @media print {
+          .hide-on-pdf { display: none !important; }
+        }
+        
+        .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); }
         
         .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
