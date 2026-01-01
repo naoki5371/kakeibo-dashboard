@@ -51,8 +51,8 @@ export function Dashboard({
     
     setIsExporting(true);
     
-    // レイアウト変更がブラウザに反映されるのを待つ
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // レイアウト変更がブラウザに完全に反映されるのを待つ
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     const element = dashboardRef.current;
     
