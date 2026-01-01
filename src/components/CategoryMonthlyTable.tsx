@@ -8,6 +8,14 @@ interface CategoryMonthlyTableProps {
 }
 
 export function CategoryMonthlyTable({ data, year }: CategoryMonthlyTableProps) {
+  // 月ごとの合計を計算
+  const monthlyTotals = data.months.map(month => {
+    return data.rows.reduce((sum, row) => sum + (row.data[month] || 0), 0);
+  });
+
+  // 年間総合計を計算
+  const grandTotal = data.rows.reduce((sum, row) => sum + row.total, 0);
+
   return (
     <div className="card category-monthly-table">
       <h3 className="card-title">
@@ -44,6 +52,19 @@ export function CategoryMonthlyTable({ data, year }: CategoryMonthlyTableProps) 
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="grand-total-row">
+                <td className="sticky-col total-label-cell">月間合計</td>
+                {monthlyTotals.map((total, index) => (
+                  <td key={index} className="amount-cell total-amount-cell">
+                    {formatCurrency(total)}
+                  </td>
+                ))}
+                <td className="total-cell final-total-cell">
+                  {formatCurrency(grandTotal)}
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
@@ -67,6 +88,11 @@ export function CategoryMonthlyTable({ data, year }: CategoryMonthlyTableProps) 
         .category-name-cell { font-weight: 600; font-size: 0.85rem; }
         .amount-cell { font-family: 'Outfit'; text-align: right; font-weight: 500; }
         .total-cell { font-family: 'Outfit'; text-align: right; font-weight: 700; background: var(--color-bg-primary); }
+        
+        .grand-total-row td { background: var(--color-bg-primary) !important; border-top: 2px solid var(--color-border); border-bottom: none; }
+        .total-label-cell { font-weight: 800; color: var(--color-accent) !important; }
+        .total-amount-cell { color: var(--color-accent) !important; font-weight: 700 !important; }
+        .final-total-cell { color: var(--color-accent) !important; font-size: 0.9rem; }
         
         tr:hover td { background: var(--color-bg-primary) !important; }
         
