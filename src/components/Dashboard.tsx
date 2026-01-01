@@ -77,9 +77,9 @@ export function Dashboard({
         height: height
       },
       jsPDF: { 
-        unit: 'px', 
-        format: [width, height], // コンテンツのサイズに合わせた1枚のページ
-        hotfixes: ['px_scaling']
+        unit: 'px' as const, 
+        format: [width, height] as [number, number], // コンテンツのサイズに合わせた1枚のページ
+        hotfixes: ['px_scaling'] as any
       }
     };
 
