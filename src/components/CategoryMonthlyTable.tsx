@@ -77,10 +77,12 @@ export function CategoryMonthlyTable({ data, year }: CategoryMonthlyTableProps) 
 
         @media print {
           .category-monthly-table { break-inside: avoid; }
-          .table-container { overflow: visible !important; }
-          .analysis-table { table-layout: auto !important; width: 100% !important; font-size: 0.7rem !important; }
-          .sticky-col { position: static !important; width: auto !important; min-width: 80px !important; }
-          .month-col { width: auto !important; min-width: 40px !important; }
+          .table-container { overflow: visible !important; width: 100% !important; }
+          .analysis-table { table-layout: fixed !important; width: 100% !important; font-size: 0.75rem !important; border: 1px solid #e2e8f0 !important; }
+          .sticky-col { position: static !important; width: 120px !important; min-width: 120px !important; border-right: 1px solid #e2e8f0 !important; }
+          .month-col { width: 75px !important; min-width: 75px !important; }
+          .total-col { width: 90px !important; min-width: 90px !important; }
+          .analysis-table th, .analysis-table td { padding: 8px 4px !important; border: 1px solid #e2e8f0 !important; }
         }
       `}</style>
     </div>

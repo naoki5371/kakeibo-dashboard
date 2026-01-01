@@ -53,7 +53,7 @@ export function Dashboard({
     
     const element = dashboardRef.current;
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
-    const width = 1100;
+    const width = 1400; // 表が収まるように幅を拡大
     const height = element.scrollHeight + 100;
     
     const opt = {
@@ -65,7 +65,7 @@ export function Dashboard({
         useCORS: true,
         letterRendering: true,
         backgroundColor: '#f8fafc',
-        windowWidth: 1200,
+        windowWidth: 1400, // レンダリング用の幅も拡大
         scrollY: 0
       },
       jsPDF: { 
@@ -199,7 +199,7 @@ export function Dashboard({
         .section-margin-top { margin-top: 32px; }
         .section-margin-large { margin-top: 56px; }
         
-        .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
+        .pdf-export-mode { background: #f8fafc !important; width: 1400px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
         .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 48px !important; width: 100% !important; }
         .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 0 !important; }
         .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
@@ -208,9 +208,9 @@ export function Dashboard({
         .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
         .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
         .pdf-export-mode .table-container { overflow: visible !important; width: 100% !important; }
-        .pdf-export-mode .analysis-table { font-size: 0.7rem !important; }
-        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { padding: 6px 4px !important; min-width: auto !important; }
-        .pdf-export-mode .sticky-col { position: static !important; border-right: 1px solid #e2e8f0 !important; min-width: 100px !important; }
+        .pdf-export-mode .analysis-table { font-size: 0.75rem !important; }
+        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { padding: 8px 6px !important; min-width: auto !important; }
+        .pdf-export-mode .sticky-col { position: static !important; border-right: 1px solid #e2e8f0 !important; min-width: 120px !important; }
         
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
         .summary-card-icon { width: 80px; height: 80px; background: rgba(244, 63, 94, 0.1); color: var(--color-expense); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
