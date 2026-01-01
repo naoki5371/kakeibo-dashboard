@@ -11,13 +11,11 @@ interface SettingsProps {
 export function Settings({ settings, onSave, onClose }: SettingsProps) {
   const [spreadsheetId, setSpreadsheetId] = useState(settings?.spreadsheetId || '');
   const [expenseSheetName, setExpenseSheetName] = useState(settings?.expenseSheetName || '家計簿【支出】（回答）');
-  const [incomeSheetName, setIncomeSheetName] = useState(settings?.incomeSheetName || '家計簿【収入】（回答）');
 
   useEffect(() => {
     if (settings) {
       setSpreadsheetId(settings.spreadsheetId);
       setExpenseSheetName(settings.expenseSheetName);
-      setIncomeSheetName(settings.incomeSheetName);
     }
   }, [settings]);
 
@@ -26,7 +24,6 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
     onSave({
       spreadsheetId,
       expenseSheetName,
-      incomeSheetName,
     });
     onClose();
   };
@@ -86,34 +83,18 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
             </h3>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label className="label" htmlFor="expenseSheet">
-                支出シート名
-              </label>
-              <input
-                id="expenseSheet"
-                type="text"
-                className="input"
-                value={expenseSheetName}
-                onChange={e => setExpenseSheetName(e.target.value)}
-                placeholder="家計簿【支出】（回答）"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="label" htmlFor="incomeSheet">
-                収入シート名
-              </label>
-              <input
-                id="incomeSheet"
-                type="text"
-                className="input"
-                value={incomeSheetName}
-                onChange={e => setIncomeSheetName(e.target.value)}
-                placeholder="家計簿【収入】（回答）"
-              />
-            </div>
+          <div className="form-group">
+            <label className="label" htmlFor="expenseSheet">
+              支出シート名
+            </label>
+            <input
+              id="expenseSheet"
+              type="text"
+              className="input"
+              value={expenseSheetName}
+              onChange={e => setExpenseSheetName(e.target.value)}
+              placeholder="家計簿【支出】（回答）"
+            />
           </div>
 
           <div className="settings-actions">
@@ -128,158 +109,26 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
         </form>
 
         <style>{`
-          .settings-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.2s ease;
-          }
-
-          .settings-modal {
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            background: var(--color-bg-card);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease;
-          }
-
-          @keyframes slideUp {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          .settings-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--color-border);
-          }
-
-          .settings-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-          }
-
-          .settings-title svg {
-            color: var(--color-accent-primary);
-          }
-
-          .settings-title h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-          }
-
-          .settings-close {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: transparent;
-            border: none;
-            border-radius: var(--radius-md);
-            color: var(--color-text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-          }
-
-          .settings-close:hover {
-            background: var(--color-bg-hover);
-            color: var(--color-text-primary);
-          }
-
-          .settings-modal form {
-            padding: 24px;
-          }
-
-          .settings-section {
-            margin-bottom: 20px;
-          }
-
-          .settings-section h3 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-            margin-bottom: 8px;
-          }
-
-          .settings-section h3 svg {
-            color: var(--color-accent-secondary);
-          }
-
-          .settings-description {
-            font-size: 0.875rem;
-            color: var(--color-text-muted);
-            line-height: 1.5;
-          }
-
-          .settings-instructions {
-            margin-top: 16px;
-            padding: 16px;
-            background: var(--color-bg-primary);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--color-border);
-          }
-
-          .settings-instructions h4 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--color-accent-primary);
-            margin-bottom: 12px;
-          }
-
-          .settings-instructions ol {
-            padding-left: 20px;
-            font-size: 0.85rem;
-            color: var(--color-text-secondary);
-          }
-
-          .settings-instructions li {
-            margin-bottom: 6px;
-            line-height: 1.5;
-          }
-
-          .form-group {
-            margin-bottom: 20px;
-          }
-
-          .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-          }
-
-          .settings-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid var(--color-border);
-          }
+          .settings-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease; }
+          .settings-modal { width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease; }
+          .settings-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--color-border); }
+          .settings-title { display: flex; align-items: center; gap: 12px; }
+          .settings-title svg { color: var(--color-accent-primary); }
+          .settings-title h2 { font-size: 1.25rem; font-weight: 600; }
+          .settings-close { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: transparent; border: none; border-radius: var(--radius-md); color: var(--color-text-secondary); cursor: pointer; transition: all var(--transition-fast); }
+          .settings-modal form { padding: 24px; }
+          .settings-section { margin-bottom: 20px; }
+          .settings-section h3 { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px; }
+          .settings-section h3 svg { color: var(--color-accent-secondary); }
+          .settings-description { font-size: 0.875rem; color: var(--color-text-muted); line-height: 1.5; }
+          .settings-instructions { margin-top: 16px; padding: 16px; background: var(--color-bg-primary); border-radius: var(--radius-md); border: 1px solid var(--color-border); }
+          .settings-instructions h4 { font-size: 0.85rem; font-weight: 600; color: var(--color-accent-primary); margin-bottom: 12px; }
+          .settings-instructions ol { padding-left: 20px; font-size: 0.85rem; color: var(--color-text-secondary); }
+          .settings-instructions li { margin-bottom: 6px; line-height: 1.5; }
+          .form-group { margin-bottom: 20px; }
+          .settings-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border); }
         `}</style>
       </div>
     </div>
   );
 }
-

@@ -33,29 +33,15 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload || !payload.length) return null;
 
-  const income = payload.find(p => p.dataKey === 'income')?.value || 0;
   const expense = payload.find(p => p.dataKey === 'expense')?.value || 0;
-  const balance = income - expense;
 
   return (
     <div className="chart-tooltip">
       <p className="tooltip-label">{label}</p>
       <div className="tooltip-row">
-        <span className="tooltip-dot income" />
-        <span>収入</span>
-        <span className="tooltip-value income">{formatCurrency(income)}</span>
-      </div>
-      <div className="tooltip-row">
         <span className="tooltip-dot expense" />
         <span>支出</span>
         <span className="tooltip-value expense">{formatCurrency(expense)}</span>
-      </div>
-      <div className="tooltip-divider" />
-      <div className="tooltip-row">
-        <span>収支</span>
-        <span className={`tooltip-value ${balance >= 0 ? 'positive' : 'negative'}`}>
-          {formatCurrency(balance)}
-        </span>
       </div>
 
       <style>{`
@@ -89,10 +75,6 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
           border-radius: 50%;
         }
 
-        .tooltip-dot.income {
-          background: var(--color-income);
-        }
-
         .tooltip-dot.expense {
           background: var(--color-expense);
         }
@@ -103,26 +85,8 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
           font-weight: 600;
         }
 
-        .tooltip-value.income {
-          color: var(--color-income);
-        }
-
         .tooltip-value.expense {
           color: var(--color-expense);
-        }
-
-        .tooltip-value.positive {
-          color: var(--color-balance-positive);
-        }
-
-        .tooltip-value.negative {
-          color: var(--color-balance-negative);
-        }
-
-        .tooltip-divider {
-          height: 1px;
-          background: var(--color-border);
-          margin: 8px 0;
         }
       `}</style>
     </div>
@@ -131,12 +95,8 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 
 export function MonthlyChart({ data }: MonthlyChartProps) {
   const formatYAxis = (value: number) => {
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M`;
-    }
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(0)}K`;
-    }
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
     return value.toString();
   };
 
@@ -144,7 +104,7 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
     <div className="card monthly-chart">
       <h3 className="card-title">
         <BarChart3 size={20} />
-        月別収支
+        月別支出推移
       </h3>
       
       <div className="chart-container">
@@ -152,7 +112,6 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
           <BarChart
             data={data}
             margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
-            barCategoryGap="20%"
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
@@ -179,18 +138,11 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
             />
             <ReferenceLine y={0} stroke="var(--color-border)" />
             <Bar
-              dataKey="income"
-              name="収入"
-              fill="var(--color-income)"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={40}
-            />
-            <Bar
               dataKey="expense"
               name="支出"
               fill="var(--color-expense)"
               radius={[4, 4, 0, 0]}
-              maxBarSize={40}
+              maxBarSize={60}
             />
           </BarChart>
         </ResponsiveContainer>
@@ -200,18 +152,13 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
         .monthly-chart {
           grid-column: span 2;
         }
-
         .chart-container {
           margin: 0 -12px;
         }
-
         @media (max-width: 768px) {
-          .monthly-chart {
-            grid-column: span 1;
-          }
+          .monthly-chart { grid-column: span 1; }
         }
       `}</style>
     </div>
   );
 }
-

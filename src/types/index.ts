@@ -9,22 +9,10 @@ export interface ExpenseRecord {
   expenseDate: string;
 }
 
-// 収入データの型
-export interface IncomeRecord {
-  timestamp: string;
-  item: string;
-  customDate: string | null;
-  category: string;
-  amount: number;
-  incomeDate: string;
-}
-
-// 月別集計データ
+// 月別集計データ（支出のみ）
 export interface MonthlyData {
   month: string;
-  income: number;
   expense: number;
-  balance: number;
 }
 
 // カテゴリ別集計
@@ -50,10 +38,8 @@ export interface TrendData {
   [category: string]: string | number;
 }
 
-// アプリの設定
+// アプリの設定（収入シート名を削除）
 export interface AppSettings {
   spreadsheetId: string;
   expenseSheetName: string;
-  incomeSheetName: string;
 }
-

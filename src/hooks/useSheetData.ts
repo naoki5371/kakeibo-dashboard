@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { ExpenseRecord, IncomeRecord, AppSettings } from '../types';
-import { fetchExpenseData, fetchIncomeData, extractSpreadsheetId } from '../utils/googleSheets';
+import type { ExpenseRecord, AppSettings } from '../types';
+import { fetchExpenseData, extractSpreadsheetId } from '../utils/googleSheets';
 
 interface UseSheetDataReturn {
   expenses: ExpenseRecord[];
-  incomes: IncomeRecord[];
   loading: boolean;
   error: string | null;
   lastUpdated: Date | null;
@@ -29,7 +28,6 @@ export function useSettings(): [AppSettings | null, (settings: AppSettings) => v
 
 export function useSheetData(settings: AppSettings | null): UseSheetDataReturn {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
-  const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -46,18 +44,12 @@ export function useSheetData(settings: AppSettings | null): UseSheetDataReturn {
     setError(null);
 
     try {
-      const [expenseData, incomeData] = await Promise.all([
-        fetchExpenseData(spreadsheetId, settings.expenseSheetName || '家計簿【支出】（回答）'),
-        fetchIncomeData(spreadsheetId, settings.incomeSheetName || '家計簿【収入】（回答）'),
-      ]);
-
+      const expenseData = await fetchExpenseData(spreadsheetId, settings.expenseSheetName || '家計簿【支出】（回答）');
       setExpenses(expenseData);
-      setIncomes(incomeData);
       setLastUpdated(new Date());
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'データの取得に失敗しました';
       setError(errorMessage);
-      console.error('Failed to fetch sheet data:', err);
     } finally {
       setLoading(false);
     }
@@ -67,15 +59,13 @@ export function useSheetData(settings: AppSettings | null): UseSheetDataReturn {
     if (settings?.spreadsheetId) {
       fetchData();
     }
-  }, [settings?.spreadsheetId, settings?.expenseSheetName, settings?.incomeSheetName, fetchData]);
+  }, [settings?.spreadsheetId, settings?.expenseSheetName, fetchData]);
 
   return {
     expenses,
-    incomes,
     loading,
     error,
     lastUpdated,
     refetch: fetchData,
   };
 }
-
