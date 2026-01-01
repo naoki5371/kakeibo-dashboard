@@ -1,3 +1,4 @@
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { GitCompare } from 'lucide-react';
 import type { MonthComparisonData } from '../types';
 import { formatCurrency } from '../utils/dataProcessor';
@@ -9,6 +10,16 @@ interface MonthComparisonProps {
 }
 
 export function MonthComparison({ data, currentMonthLabel, previousMonthLabel }: MonthComparisonProps) {
+  // 支出があるカテゴリのみ表示（見やすさのため）
+  const chartData = data
+    .filter(item => item.currentMonth > 0 || item.previousMonth > 0)
+    .map(item => ({
+      name: item.category,
+      [previousMonthLabel]: item.previousMonth,
+      [currentMonthLabel]: item.currentMonth,
+      diff: item.difference
+    }));
+
   return (
     <div className="card month-comparison">
       <h3 className="card-title">
@@ -16,70 +27,64 @@ export function MonthComparison({ data, currentMonthLabel, previousMonthLabel }:
         {currentMonthLabel} vs {previousMonthLabel}
       </h3>
 
-      <div className="comparison-list">
-        {data.length === 0 ? (
-          <div className="no-data">データがありません</div>
-        ) : (
-          data.map((item, index) => (
-            <div key={index} className="comparison-item">
-              <div className="comparison-header">
-                <span className="comparison-category">{item.category}</span>
-                <div className="comparison-badges">
-                  <span className={`diff-badge ${item.difference <= 0 ? 'good' : 'bad'}`}>
-                    {item.difference > 0 ? '+' : ''}{formatCurrency(item.difference)}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="comparison-bar-chart">
-                <div className="bar-group">
-                  <div className="bar-label">{previousMonthLabel}</div>
-                  <div className="bar-container">
-                    <div 
-                      className="bar previous" 
-                      style={{ width: `${Math.max((item.previousMonth / Math.max(item.currentMonth, item.previousMonth)) * 100, 2)}%` }}
-                    />
-                  </div>
-                  <div className="bar-value">{formatCurrency(item.previousMonth)}</div>
-                </div>
-                <div className="bar-group">
-                  <div className="bar-label">{currentMonthLabel}</div>
-                  <div className="bar-container">
-                    <div 
-                      className="bar current" 
-                      style={{ width: `${Math.max((item.currentMonth / Math.max(item.currentMonth, item.previousMonth)) * 100, 2)}%` }}
-                    />
-                  </div>
-                  <div className="bar-value">{formatCurrency(item.currentMonth)}</div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+      <div className="comparison-chart-container">
+        <ResponsiveContainer width="100%" height={chartData.length * 60 + 100}>
+          <BarChart
+            data={chartData}
+            layout="vertical"
+            margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
+            barGap={8}
+          >
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="var(--color-border)" />
+            <XAxis type="number" hide />
+            <YAxis 
+              dataKey="name" 
+              type="category" 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fontSize: 12, fontWeight: 600, fill: 'var(--color-text-primary)' }}
+              width={100}
+            />
+            <Tooltip
+              cursor={{ fill: 'var(--color-bg-primary)', opacity: 0.4 }}
+              contentStyle={{
+                backgroundColor: '#ffffff',
+                borderRadius: '12px',
+                border: '1px solid var(--color-border)',
+                boxShadow: 'var(--shadow-lg)',
+                padding: '12px'
+              }}
+              formatter={(value: number) => [formatCurrency(value), '']}
+            />
+            <Legend 
+              verticalAlign="top" 
+              align="right" 
+              wrapperStyle={{ paddingBottom: '20px', fontSize: '12px', fontWeight: 600 }}
+            />
+            <Bar 
+              dataKey={previousMonthLabel} 
+              fill="var(--color-text-muted)" 
+              fillOpacity={0.2} 
+              radius={[0, 4, 4, 0]} 
+              barSize={12}
+            />
+            <Bar 
+              dataKey={currentMonthLabel} 
+              fill="var(--color-accent)" 
+              radius={[0, 4, 4, 0]} 
+              barSize={12}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       <style>{`
         .month-comparison { min-height: 400px; }
-        .comparison-list { display: flex; flex-direction: column; gap: 32px; }
-        .comparison-item { display: flex; flex-direction: column; gap: 16px; }
+        .comparison-chart-container { margin-top: 24px; width: 100%; }
         
-        .comparison-header { display: flex; justify-content: space-between; align-items: center; }
-        .comparison-category { font-size: 0.9rem; font-weight: 600; color: var(--color-text-primary); }
-        
-        .diff-badge { font-family: 'Outfit'; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
-        .diff-badge.good { background: #f0fdf4; color: #16a34a; }
-        .diff-badge.bad { background: #fef2f2; color: #dc2626; }
-
-        .comparison-bar-chart { display: flex; flex-direction: column; gap: 8px; }
-        .bar-group { display: grid; grid-template-columns: 45px 1fr 80px; align-items: center; gap: 12px; }
-        .bar-label { font-size: 0.7rem; color: var(--color-text-muted); font-weight: 500; }
-        .bar-container { height: 6px; background: var(--color-bg-primary); border-radius: 3px; overflow: hidden; }
-        .bar { height: 100%; border-radius: 3px; }
-        .bar.previous { background: var(--color-text-muted); opacity: 0.2; }
-        .bar.current { background: var(--color-accent); }
-        .bar-value { font-family: 'Outfit'; font-size: 0.8rem; font-weight: 600; text-align: right; color: var(--color-text-primary); }
-
-        .no-data { text-align: center; padding: 40px 20px; color: var(--color-text-muted); font-size: 0.9rem; }
+        @media print {
+          .month-comparison { break-inside: avoid; }
+        }
       `}</style>
     </div>
   );

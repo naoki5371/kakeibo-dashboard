@@ -230,9 +230,18 @@ export function Dashboard({
 
         .pdf-export-mode { background: #fafafa !important; width: 1500px !important; padding: 80px !important; margin: 0 !important; }
         .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 56px !important; }
-        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #f1f5f9 !important; margin-bottom: 0 !important; }
-        .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 0 !important; }
+        .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; background: #334155 !important; }
         .pdf-export-mode .section-margin-large { margin-top: 80px !important; }
+        
+        /* PDF出力時の文字の視認性向上 */
+        .pdf-export-mode * { color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .pdf-export-mode .main-summary-card * { color: #ffffff !important; }
+        .pdf-export-mode h1, .pdf-export-mode h2, .pdf-export-mode h3 { font-weight: 800 !important; }
+        .pdf-export-mode span, .pdf-export-mode p, .pdf-export-mode div { font-weight: 600 !important; }
+        .pdf-export-mode .recharts-text { fill: #000000 !important; font-weight: 700 !important; }
+        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { border: 1px solid #94a3b8 !important; color: #000000 !important; font-weight: 600 !important; }
+        .pdf-export-mode .sticky-col { background: #f8fafc !important; }
 
         @media (max-width: 1100px) {
           .main-summary-card { padding: 40px; }
