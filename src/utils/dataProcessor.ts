@@ -82,9 +82,12 @@ export function calculateCategoryData(
   expenses: ExpenseRecord[],
   targetMonth?: Date
 ): CategoryData[] {
-  // すべての定義済みカテゴリで初期化（0円で埋める）
+  // 全データから存在するすべてのカテゴリを抽出（マスターリスト作成）
+  const allCategories = Array.from(new Set(expenses.map(e => e.category))).sort();
+  
   const categoryMap = new Map<string, number>();
-  Object.keys(CATEGORY_COLORS).forEach(cat => {
+  // すべてのカテゴリを0円で初期化
+  allCategories.forEach(cat => {
     categoryMap.set(cat, 0);
   });
   
@@ -92,7 +95,7 @@ export function calculateCategoryData(
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
   
-  // カテゴリ別に集計
+  // 選択月のカテゴリ別に集計
   for (const expense of expenses) {
     const date = getExpenseDate(expense);
     if (date && isWithinInterval(date, { start: monthStart, end: monthEnd })) {
@@ -101,15 +104,20 @@ export function calculateCategoryData(
     }
   }
   
-  // 合計を計算（パーセンテージ算出用）
   const total = Array.from(categoryMap.values()).reduce((sum, val) => sum + val, 0);
   
-  // 配列に変換（金額順にソート）
   let colorIndex = 0;
   return Array.from(categoryMap.entries())
-    .sort((a, b) => b[1] - a[1]) // 金額が多い順
+    .sort((a, b) => {
+      // 金額があるものを優先、その後はカテゴリ名順
+      if (b[1] !== a[1]) return b[1] - a[1];
+      return a[0].localeCompare(b[0]);
+    })
     .map(([category, amount]) => {
-      const color = CATEGORY_COLORS[category] || DEFAULT_COLORS[colorIndex++ % DEFAULT_COLORS.length];
+      // 色の決定（01 食費 などの場合、数字を除いた名前で色を探す）
+      const cleanName = category.replace(/^\d+[\s　-_]*/, '');
+      const color = CATEGORY_COLORS[category] || CATEGORY_COLORS[cleanName] || DEFAULT_COLORS[colorIndex++ % DEFAULT_COLORS.length];
+      
       return {
         category,
         amount,
