@@ -38,6 +38,13 @@ export interface TrendData {
   [category: string]: string | number;
 }
 
+// 年間サマリー
+export interface YearlySummary {
+  totalExpense: number;
+  averageMonthlyExpense: number;
+  monthsWithData: number;
+}
+
 // アプリの設定（収入シート名を削除）
 export interface AppSettings {
   spreadsheetId: string;
