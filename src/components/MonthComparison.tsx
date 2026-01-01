@@ -54,7 +54,7 @@ export function MonthComparison({ data, currentMonthLabel, previousMonthLabel }:
                 boxShadow: 'var(--shadow-lg)',
                 padding: '12px'
               }}
-              formatter={(value: number) => [formatCurrency(value), '']}
+              formatter={(value: any) => [formatCurrency(value), '']}
             />
             <Legend 
               verticalAlign="top" 
