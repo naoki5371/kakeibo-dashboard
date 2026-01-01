@@ -32,31 +32,14 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <div className="pie-tooltip-percent">{data.percentage.toFixed(1)}%</div>
 
       <style>{`
-        .pie-tooltip { background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 12px 16px; box-shadow: var(--shadow-lg); min-width: 140px; }
-        .pie-tooltip-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .pie-tooltip-dot { width: 10px; height: 10px; border-radius: 50%; }
-        .pie-tooltip-category { font-weight: 500; color: var(--color-text-primary); font-size: 0.9rem; }
-        .pie-tooltip-amount { font-family: 'Outfit', monospace; font-size: 1.1rem; font-weight: 600; color: var(--color-text-primary); }
-        .pie-tooltip-percent { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 4px; }
+        .pie-tooltip { background: white; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-lg); min-width: 160px; }
+        .pie-tooltip-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .pie-tooltip-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .pie-tooltip-category { font-weight: 600; color: var(--color-text-primary); font-size: 0.85rem; }
+        .pie-tooltip-amount { font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: var(--color-text-primary); }
+        .pie-tooltip-percent { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 4px; }
       `}</style>
     </div>
-  );
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function renderCustomLabel(props: any) {
-  const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
-  if (percent < 0.05) return null;
-  
-  const RADIAN = Math.PI / 180;
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  return (
-    <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={12} fontWeight={600} style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
   );
 }
 
@@ -68,54 +51,49 @@ interface ChartDataItem {
   [key: string]: string | number;
 }
 
-export function CategoryPieChart({ data, title = '今月のカテゴリ別支出' }: CategoryPieChartProps) {
+export function CategoryPieChart({ data, title = 'カテゴリ別支出' }: CategoryPieChartProps) {
   const total = data.reduce((sum, item) => sum + item.amount, 0);
   
-  // 1. 円グラフ用：支出があるものだけ抽出し、金額の多い順にソートする
   const chartData: ChartDataItem[] = data
     .filter(item => item.amount > 0)
     .sort((a, b) => b.amount - a.amount)
     .map(item => ({ ...item }));
 
-  // 2. リスト用：元のデータ（番号順 01-14）をそのまま使う
-
   return (
     <div className="card category-pie-chart">
       <h3 className="card-title">
-        <PieChartIcon size={20} />
+        <PieChartIcon size={20} strokeWidth={1.5} />
         {title}
       </h3>
 
       <div className="pie-chart-content">
         <div className="pie-chart-container">
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={2}
+                innerRadius={75}
+                outerRadius={105}
+                paddingAngle={4}
                 dataKey="amount"
-                labelLine={false}
-                label={renderCustomLabel}
+                stroke="none"
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={entry.color} cornerRadius={4} />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
           <div className="pie-chart-center">
-            <span className="pie-chart-total-label">総支出</span>
+            <span className="pie-chart-total-label">Total</span>
             <span className="pie-chart-total-amount">{formatCurrency(total)}</span>
           </div>
         </div>
 
         <div className="category-list-container">
-          <h4 className="list-title">カテゴリ別内訳</h4>
           <div className="category-full-list">
             {data.map((item, index) => (
               <div key={index} className={`category-list-item ${item.amount === 0 ? 'zero-amount' : ''}`}>
@@ -134,32 +112,30 @@ export function CategoryPieChart({ data, title = '今月のカテゴリ別支出
       </div>
 
       <style>{`
-        .category-pie-chart { min-height: 500px; grid-column: span 1; }
-        .pie-chart-content { display: flex; flex-direction: column; gap: 32px; }
+        .category-pie-chart { min-height: 500px; }
+        .pie-chart-content { display: flex; flex-direction: column; gap: 40px; }
         .pie-chart-container { position: relative; }
-        .pie-chart-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-        .pie-chart-total-label { display: block; font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 4px; }
-        .pie-chart-total-amount { font-family: 'Outfit', monospace; font-size: 1.25rem; font-weight: 700; color: var(--color-text-primary); }
+        .pie-chart-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+        .pie-chart-total-label { display: block; font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
+        .pie-chart-total-amount { font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary); }
 
-        .category-list-container { border-top: 1px solid var(--color-border); padding-top: 24px; }
-        .list-title { font-size: 0.9rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 16px; }
-        .category-full-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .category-list-container { border-top: 1px solid var(--color-border); padding-top: 32px; }
+        .category-full-list { display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
         
-        /* スクロールバーのデザイン */
+        /* スクロールバー */
         .category-full-list::-webkit-scrollbar { width: 4px; }
         .category-full-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
-        
-        .category-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--color-bg-primary); border-radius: var(--radius-md); border: 1px solid transparent; transition: all 0.2s ease; }
-        .category-list-item:hover { background: var(--color-bg-hover); border-color: var(--color-border); }
-        .category-list-item.zero-amount { opacity: 0.5; }
+
+        .category-list-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; transition: opacity 0.2s ease; }
+        .category-list-item.zero-amount { opacity: 0.3; }
         
         .category-info { display: flex; align-items: center; gap: 12px; }
-        .category-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .category-name { font-size: 0.9rem; font-weight: 500; color: var(--color-text-primary); }
+        .category-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .category-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text-primary); }
         
-        .category-values { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-        .category-amount { font-family: 'Outfit', monospace; font-size: 0.95rem; font-weight: 600; color: var(--color-text-primary); }
-        .category-percent { font-size: 0.75rem; color: var(--color-text-muted); }
+        .category-values { display: flex; align-items: center; gap: 16px; }
+        .category-amount { font-family: 'Outfit'; font-size: 0.9rem; font-weight: 600; color: var(--color-text-primary); }
+        .category-percent { font-family: 'Outfit'; font-size: 0.75rem; color: var(--color-text-muted); min-width: 45px; text-align: right; }
 
         @media (max-width: 768px) {
           .category-pie-chart { grid-column: span 1; }

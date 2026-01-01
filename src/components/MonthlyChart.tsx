@@ -1,14 +1,4 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  ReferenceLine,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { BarChart3 } from 'lucide-react';
 import type { MonthlyData } from '../types';
 import { formatCurrency } from '../utils/dataProcessor';
@@ -17,147 +7,64 @@ interface MonthlyChartProps {
   data: MonthlyData[];
 }
 
-interface TooltipPayload {
-  dataKey: string;
-  value: number;
-  color: string;
-  name: string;
-}
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: TooltipPayload[];
-  label?: string;
-}
-
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload || !payload.length) return null;
-
-  const expense = payload.find(p => p.dataKey === 'expense')?.value || 0;
-
-  return (
-    <div className="chart-tooltip">
-      <p className="tooltip-label">{label}</p>
-      <div className="tooltip-row">
-        <span className="tooltip-dot expense" />
-        <span>支出</span>
-        <span className="tooltip-value expense">{formatCurrency(expense)}</span>
-      </div>
-
-      <style>{`
-        .chart-tooltip {
-          background: var(--color-bg-secondary);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-md);
-          padding: 12px 16px;
-          box-shadow: var(--shadow-lg);
-        }
-
-        .tooltip-label {
-          font-weight: 600;
-          color: var(--color-text-primary);
-          margin-bottom: 10px;
-          font-size: 0.9rem;
-        }
-
-        .tooltip-row {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.85rem;
-          color: var(--color-text-secondary);
-          margin-bottom: 6px;
-        }
-
-        .tooltip-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
-
-        .tooltip-dot.expense {
-          background: var(--color-expense);
-        }
-
-        .tooltip-value {
-          margin-left: auto;
-          font-family: 'Outfit', monospace;
-          font-weight: 600;
-        }
-
-        .tooltip-value.expense {
-          color: var(--color-expense);
-        }
-      `}</style>
-    </div>
-  );
-}
-
 export function MonthlyChart({ data }: MonthlyChartProps) {
-  const formatYAxis = (value: number) => {
-    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
-    return value.toString();
-  };
-
   return (
     <div className="card monthly-chart">
       <h3 className="card-title">
-        <BarChart3 size={20} />
+        <BarChart3 size={20} strokeWidth={1.5} />
         月別支出推移
       </h3>
-      
+
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={320}>
-          <BarChart
-            data={data}
-            margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="month"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12 }}
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid vertical={false} stroke="var(--color-border)" strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="month" 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fontSize: 12, fontWeight: 500 }}
+              dy={15}
             />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={formatYAxis}
-              tick={{ fontSize: 12 }}
+            <YAxis 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fontSize: 11, fontWeight: 500 }}
+              tickFormatter={(value) => `¥${(value / 1000).toLocaleString()}k`}
             />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend
-              wrapperStyle={{ paddingTop: 20 }}
-              iconType="circle"
-              formatter={(value) => (
-                <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>
-                  {value}
-                </span>
-              )}
+            <Tooltip
+              cursor={{ fill: 'var(--color-bg-primary)', radius: 8 }}
+              contentStyle={{
+                backgroundColor: '#ffffff',
+                borderRadius: '12px',
+                border: '1px solid var(--color-border)',
+                boxShadow: 'var(--shadow-lg)',
+                padding: '12px 16px'
+              }}
+              formatter={(value: number) => [formatCurrency(value), '支出']}
+              labelStyle={{ fontWeight: 700, marginBottom: '8px', color: 'var(--color-text-primary)' }}
             />
-            <ReferenceLine y={0} stroke="var(--color-border)" />
-            <Bar
-              dataKey="expense"
-              name="支出"
-              fill="var(--color-expense)"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={60}
-            />
+            <Bar 
+              dataKey="expense" 
+              name="支出" 
+              radius={[6, 6, 0, 0]} 
+              barSize={32}
+            >
+              {data.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={index === data.length - 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'} 
+                  fillOpacity={index === data.length - 1 ? 1 : 0.2}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <style>{`
-        .monthly-chart {
-          grid-column: span 2;
-        }
-        .chart-container {
-          margin: 0 -12px;
-        }
-        @media (max-width: 768px) {
-          .monthly-chart { grid-column: span 1; }
-        }
+        .monthly-chart { min-height: 450px; }
+        .chart-container { margin-top: 32px; width: 100%; }
       `}</style>
     </div>
   );

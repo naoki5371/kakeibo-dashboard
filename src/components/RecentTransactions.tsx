@@ -1,4 +1,4 @@
-import { Receipt, ArrowDownCircle } from 'lucide-react';
+import { Receipt } from 'lucide-react';
 import { formatCurrency } from '../utils/dataProcessor';
 
 interface Transaction {
@@ -17,7 +17,7 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
   return (
     <div className="card recent-transactions">
       <h3 className="card-title">
-        <Receipt size={20} />
+        <Receipt size={20} strokeWidth={1.5} />
         直近の支出
       </h3>
 
@@ -28,22 +28,18 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
           ) : (
             data.map((transaction, index) => (
               <div key={index} className="transaction-item">
-                <div className="transaction-icon expense">
-                  <ArrowDownCircle size={20} />
-                </div>
-
                 <div className="transaction-content">
                   <div className="transaction-main">
                     <span className="transaction-item-name">
                       {transaction.item || '(項目なし)'}
                     </span>
-                    <span className="transaction-amount expense">
+                    <span className="transaction-amount">
                       -{formatCurrency(transaction.amount)}
                     </span>
                   </div>
                   <div className="transaction-meta">
                     <span className="transaction-date">{transaction.date}</span>
-                    <span className="transaction-badge expense">
+                    <span className="transaction-category">
                       {transaction.category}
                     </span>
                   </div>
@@ -56,27 +52,27 @@ export function RecentTransactions({ data }: RecentTransactionsProps) {
 
       <style>{`
         .recent-transactions { min-height: 400px; display: flex; flex-direction: column; }
-        .transactions-container { flex: 1; max-height: 450px; overflow-y: auto; padding-right: 8px; margin-top: 12px; }
+        .transactions-container { flex: 1; max-height: 450px; overflow-y: auto; padding-right: 12px; margin-top: 8px; }
         
         /* スクロールバーのデザイン */
         .transactions-container::-webkit-scrollbar { width: 4px; }
         .transactions-container::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
 
         .transactions-list { display: flex; flex-direction: column; gap: 4px; }
-        .transaction-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--color-bg-primary); border-radius: var(--radius-md); border: 1px solid transparent; transition: all var(--transition-fast); }
-        .transaction-item:hover { border-color: var(--color-border); background: var(--color-bg-hover); }
-        .transaction-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-md); flex-shrink: 0; }
-        .transaction-icon.expense { background: rgba(244, 63, 94, 0.1); color: var(--color-expense); }
-        .transaction-content { flex: 1; min-width: 0; }
-        .transaction-main { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
-        .transaction-item-name { font-size: 0.9rem; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .transaction-amount { font-family: 'Outfit', monospace; font-size: 0.95rem; font-weight: 600; flex-shrink: 0; }
-        .transaction-amount.expense { color: var(--color-expense); }
-        .transaction-meta { display: flex; align-items: center; gap: 10px; }
-        .transaction-date { font-size: 0.75rem; color: var(--color-text-muted); }
-        .transaction-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 999px; }
-        .transaction-badge.expense { background: rgba(244, 63, 94, 0.1); color: var(--color-expense); }
-        .no-data { text-align: center; padding: 40px 20px; color: var(--color-text-muted); font-size: 0.9rem; }
+        .transaction-item { padding: 16px 0; border-bottom: 1px solid var(--color-border); transition: opacity 0.2s ease; }
+        .transaction-item:last-child { border-bottom: none; }
+        .transaction-item:hover { opacity: 0.7; }
+        
+        .transaction-content { display: flex; flex-direction: column; gap: 6px; }
+        .transaction-main { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+        .transaction-item-name { font-size: 0.95rem; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .transaction-amount { font-family: 'Outfit'; font-size: 1rem; font-weight: 600; color: var(--color-text-primary); flex-shrink: 0; }
+        
+        .transaction-meta { display: flex; align-items: center; justify-content: space-between; }
+        .transaction-date { font-family: 'Outfit'; font-size: 0.75rem; color: var(--color-text-muted); }
+        .transaction-category { font-size: 0.75rem; color: var(--color-text-secondary); background: var(--color-bg-primary); padding: 2px 8px; border-radius: 4px; }
+        
+        .no-data { text-align: center; padding: 60px 20px; color: var(--color-text-muted); font-size: 0.9rem; }
 
         @media print {
           .transactions-container { max-height: none !important; overflow: visible !important; }

@@ -53,8 +53,7 @@ export function Dashboard({
     
     const element = dashboardRef.current;
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
-    // 1枚の長いページとして出力するためのサイズ計算
-    const width = 1500; // さらに幅を拡大
+    const width = 1500; // 表が収まるように幅を拡大
     const height = element.scrollHeight + 100;
     
     const opt = {
@@ -125,11 +124,11 @@ export function Dashboard({
         </div>
         <div className="dashboard-actions">
           <button className="btn btn-secondary pdf-btn" onClick={handleExportPDF} disabled={loading || isExporting}>
-            <Download size={18} className={isExporting ? 'animate-pulse' : ''} />
+            <Download size={18} strokeWidth={1.5} className={isExporting ? 'animate-pulse' : ''} />
             {isExporting ? '出力中...' : 'PDFを出力'}
           </button>
           <button className="btn btn-secondary refresh-btn" onClick={onRefresh} disabled={loading || isExporting}>
-            <RefreshCw size={18} className={loading ? 'spinning' : ''} />
+            <RefreshCw size={18} strokeWidth={1.5} className={loading ? 'spinning' : ''} />
             {loading ? '更新中...' : 'データを更新'}
           </button>
         </div>
@@ -140,19 +139,26 @@ export function Dashboard({
           <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
         </div>
 
-        {/* 1. 今月の総支出 */}
+        {/* 1. 今月の総支出 - ミニマルで洗練されたデザイン */}
         <div className="summary-cards single-card section-margin">
-          <div className="summary-card expense-primary animate-fade-in">
-            <div className="summary-card-icon"><TrendingDown size={32} /></div>
-            <div className="summary-card-content">
-              <span className="summary-card-label">{isCurrentMonth ? '今月' : monthLabel}の総支出</span>
-              <span className="summary-card-value amount-expense-large">{formatCurrency(selectedMonthSummary.expense)}</span>
-            </div>
-            <div className="summary-card-stats hide-on-pdf">
-              <div className="stat-item">
-                <CreditCard size={16} />
-                <span>{expenses.filter(e => format(new Date(e.expenseDate), 'yyyy-MM') === format(selectedMonth, 'yyyy-MM')).length} 件の取引</span>
+          <div className="main-summary-card animate-fade-in">
+            <div className="main-summary-content">
+              <div className="main-summary-info">
+                <span className="main-summary-label">{isCurrentMonth ? '今月' : monthLabel}の支出合計</span>
+                <h2 className="main-summary-value">
+                  <span className="currency-symbol">¥</span>
+                  {selectedMonthSummary.expense.toLocaleString()}
+                </h2>
               </div>
+              <div className="main-summary-stats hide-on-pdf">
+                <div className="stat-badge">
+                  <CreditCard size={14} strokeWidth={2} />
+                  <span>{expenses.filter(e => format(new Date(e.expenseDate), 'yyyy-MM') === format(selectedMonth, 'yyyy-MM')).length} Transactions</span>
+                </div>
+              </div>
+            </div>
+            <div className="main-summary-decoration">
+              <TrendingDown size={120} strokeWidth={0.5} />
             </div>
           </div>
         </div>
@@ -163,18 +169,18 @@ export function Dashboard({
           <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP10`} /></div>
 
           {/* 3. 比較・履歴 2カラム */}
-          <div className="animate-fade-in">
+          <div className="animate-fade-in section-margin-top">
             <MonthComparison 
               data={monthComparisonData} 
               currentMonthLabel={monthLabel} 
               previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} 
             />
           </div>
-          <div className="animate-fade-in"><RecentTransactions data={recentTransactions} /></div>
+          <div className="animate-fade-in section-margin-top"><RecentTransactions data={recentTransactions} /></div>
 
           {/* 4. 年間集計 2カラム */}
-          <div className="animate-fade-in"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
-          <div className="animate-fade-in"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
+          <div className="animate-fade-in section-margin-top"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
+          <div className="animate-fade-in section-margin-top"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
         </div>
 
         {/* 5. 推移 1カラム */}
@@ -185,49 +191,54 @@ export function Dashboard({
       </div>
 
       <style>{`
-        .dashboard { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-        .dashboard-title { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); }
-        .last-updated { font-size: 0.8rem; color: var(--color-text-muted); }
-        .dashboard-actions { display: flex; gap: 12px; align-items: center; }
-        .pdf-btn:hover { border-color: var(--color-accent-secondary); color: var(--color-accent-secondary); }
-        .month-selector-container { margin-bottom: 32px; }
+        .dashboard { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 24px; }
+        .dashboard-title { font-size: 2.25rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; }
+        .last-updated { font-size: 0.75rem; color: var(--color-text-muted); font-family: 'Outfit'; margin-top: 4px; display: block; }
+        .dashboard-actions { display: flex; gap: 16px; align-items: center; }
+        
+        .month-selector-container { margin-bottom: 40px; }
         
         @media print { .hide-on-pdf { display: none !important; } }
         
-        .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); transition: all 0.3s ease; }
+        .dashboard-content-to-export { background: transparent; padding: 4px; transition: all 0.3s ease; }
         .section-margin { margin-top: 40px; }
         .section-margin-top { margin-top: 32px; }
-        .section-margin-large { margin-top: 56px; }
+        .section-margin-large { margin-top: 64px; }
         
-        .pdf-export-mode { background: #f8fafc !important; width: 1400px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
-        .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 48px !important; width: 100% !important; }
-        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 0 !important; }
-        .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
-        .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
-        .pdf-export-mode .section-margin, .pdf-export-mode .section-margin-top, .pdf-export-mode .section-margin-large { margin-top: 56px !important; }
-        .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
-        .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
-        .pdf-export-mode .table-container { overflow: visible !important; width: 100% !important; }
-        .pdf-export-mode .analysis-table { font-size: 0.75rem !important; }
-        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { padding: 8px 6px !important; min-width: auto !important; }
-        .pdf-export-mode .sticky-col { position: static !important; border-right: 1px solid #e2e8f0 !important; min-width: 120px !important; }
+        /* メインサマリーカードの刷新 */
+        .main-summary-card {
+          position: relative;
+          background: var(--color-accent);
+          color: white;
+          padding: 56px;
+          border-radius: var(--radius-xl);
+          overflow: hidden;
+          box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.12);
+        }
         
-        .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
-        .summary-card-icon { width: 80px; height: 80px; background: rgba(244, 63, 94, 0.1); color: var(--color-expense); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
-        .summary-card-content { flex: 1; margin-left: 32px; }
-        .summary-card-label { font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 8px; display: block; }
-        .amount-expense-large { font-size: 3.5rem; font-weight: 800; color: var(--color-text-primary); font-family: 'Outfit', sans-serif; }
-        .summary-card-stats { display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--color-border); padding-left: 32px; }
-        .stat-item { display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.95rem; }
+        .main-summary-content { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; }
+        .main-summary-label { font-size: 1rem; font-weight: 500; opacity: 0.8; margin-bottom: 12px; display: block; }
+        .main-summary-value { font-family: 'Outfit'; font-size: 4.5rem; font-weight: 800; line-height: 1; display: flex; align-items: baseline; gap: 8px; }
+        .currency-symbol { font-size: 2.5rem; font-weight: 400; opacity: 0.6; }
+        
+        .main-summary-stats { display: flex; gap: 16px; margin-top: 24px; }
+        .stat-badge { background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        .main-summary-decoration { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); opacity: 0.1; pointer-events: none; }
+        
+        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+        .pdf-export-mode { background: #fafafa !important; width: 1500px !important; padding: 80px !important; margin: 0 !important; }
+        .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 56px !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #f1f5f9 !important; margin-bottom: 0 !important; }
+        .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; }
+        .pdf-export-mode .section-margin-large { margin-top: 80px !important; }
 
-        @media (max-width: 1000px) {
-          .summary-card.expense-primary { flex-direction: column; text-align: center; gap: 24px; padding: 32px; }
-          .summary-card-content { margin-left: 0; }
-          .summary-card-stats { border-left: none; padding-left: 0; border-top: 1px solid var(--color-border); padding-top: 24px; width: 100%; justify-content: center; }
-          .dashboard-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1100px) {
+          .main-summary-card { padding: 40px; }
+          .main-summary-value { font-size: 3.5rem; }
+          .dashboard-grid { grid-template-columns: 1fr; gap: 32px; }
         }
       `}</style>
     </div>
