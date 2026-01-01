@@ -12,10 +12,9 @@ interface YearlySummaryProps {
   };
   year?: number;
   onYearChange?: (year: number) => void;
-  availableYears?: number[];
 }
 
-export function YearlySummary({ data, year, onYearChange, availableYears }: YearlySummaryProps) {
+export function YearlySummary({ data, year, onYearChange }: YearlySummaryProps) {
   const currentYear = year || new Date().getFullYear();
   const canNavigate = onYearChange !== undefined;
   
