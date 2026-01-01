@@ -265,6 +265,7 @@ export function Dashboard({
         .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
         .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
         .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
+        .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
         
         .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
