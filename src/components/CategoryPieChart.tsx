@@ -60,7 +60,6 @@ function renderCustomLabel(props: any) {
   );
 }
 
-// データをRechartsが期待する形式に変換
 interface ChartDataItem {
   category: string;
   amount: number;
@@ -72,10 +71,13 @@ interface ChartDataItem {
 export function CategoryPieChart({ data, title = '今月のカテゴリ別支出' }: CategoryPieChartProps) {
   const total = data.reduce((sum, item) => sum + item.amount, 0);
   
-  // グラフには支出があるものだけ表示
+  // 1. 円グラフ用：支出があるものだけ抽出し、金額の多い順にソートする
   const chartData: ChartDataItem[] = data
     .filter(item => item.amount > 0)
+    .sort((a, b) => b.amount - a.amount)
     .map(item => ({ ...item }));
+
+  // 2. リスト用：元のデータ（番号順 01-14）をそのまま使う
 
   return (
     <div className="card category-pie-chart">
@@ -113,7 +115,7 @@ export function CategoryPieChart({ data, title = '今月のカテゴリ別支出
         </div>
 
         <div className="category-list-container">
-          <h4 className="list-title">カテゴリ別内訳（全項目）</h4>
+          <h4 className="list-title">カテゴリ別内訳</h4>
           <div className="category-full-list">
             {data.map((item, index) => (
               <div key={index} className={`category-list-item ${item.amount === 0 ? 'zero-amount' : ''}`}>
@@ -139,17 +141,16 @@ export function CategoryPieChart({ data, title = '今月のカテゴリ別支出
         .pie-chart-total-label { display: block; font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 4px; }
         .pie-chart-total-amount { font-family: 'Outfit', monospace; font-size: 1.25rem; font-weight: 700; color: var(--color-text-primary); }
 
-        .category-list-container { border-top: 1px solid var(--color-border); pt: 20px; }
-        .list-title { font-size: 0.9rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 16px; margin-top: 24px; }
-        .category-full-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .category-list-container { border-top: 1px solid var(--color-border); padding-top: 24px; }
+        .list-title { font-size: 0.9rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 16px; }
+        .category-full-list { display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; padding-right: 8px; }
         
-        /* スクロールバーのカスタマイズ */
         .category-full-list::-webkit-scrollbar { width: 4px; }
         .category-full-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
 
-        .category-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--color-bg-primary); border-radius: var(--radius-md); transition: all 0.2s ease; }
-        .category-list-item:hover { background: var(--color-bg-hover); transform: translateX(4px); }
-        .category-list-item.zero-amount { opacity: 0.6; }
+        .category-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--color-bg-primary); border-radius: var(--radius-md); border: 1px solid transparent; transition: all 0.2s ease; }
+        .category-list-item:hover { background: var(--color-bg-hover); border-color: var(--color-border); }
+        .category-list-item.zero-amount { opacity: 0.5; }
         
         .category-info { display: flex; align-items: center; gap: 12px; }
         .category-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
