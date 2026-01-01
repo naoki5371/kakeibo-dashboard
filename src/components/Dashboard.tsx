@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { RefreshCw, AlertCircle, TrendingDown, CreditCard, PieChart } from 'lucide-react';
+import { RefreshCw, AlertCircle, TrendingDown, CreditCard } from 'lucide-react';
 import { format, startOfMonth, subMonths } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import type { ExpenseRecord } from '../types';
