@@ -51,23 +51,36 @@ export function Dashboard({
     
     setIsExporting(true);
     
+    // レイアウト適用を待つための短い遅延
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const element = dashboardRef.current;
     const now = new Date();
     const fileName = `${format(now, 'yyyy.MM.dd')}家計簿ダッシュボード.pdf`;
     
+    // 要素の実際のサイズを取得
+    const width = element.offsetWidth;
+    const height = element.offsetHeight;
+    
     const opt = {
-      margin: [10, 10, 10, 10] as [number, number, number, number],
+      margin: 0, // 余白なし（コンテンツ側で調整）
       filename: fileName,
-      image: { type: 'jpeg' as const, quality: 0.98 },
+      image: { type: 'jpeg' as const, quality: 1.0 },
       html2canvas: { 
         scale: 2, 
         useCORS: true,
         letterRendering: true,
         backgroundColor: '#f8fafc',
         scrollY: 0,
-        windowWidth: 1200 // 出力時の仮想的なウィンドウ幅を固定して崩れを防ぐ
+        windowWidth: 1300, // デスクトップ表示を強制
+        width: width,
+        height: height
       },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
+      jsPDF: { 
+        unit: 'px', 
+        format: [width, height], // コンテンツのサイズに合わせた1枚のページ
+        hotfixes: ['px_scaling']
+      }
     };
 
     try {
@@ -245,11 +258,12 @@ export function Dashboard({
           .hide-on-pdf { display: none !important; }
         }
         
-        .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); }
+        .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); transition: all 0.3s ease; }
         
-        .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 20px !important; margin: 0 auto !important; }
-        .pdf-export-mode .dashboard-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
-        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; page-break-inside: avoid; }
+        .pdf-export-mode { background: #f8fafc !important; width: 1200px !important; padding: 40px !important; margin: 0 !important; border-radius: 0 !important; }
+        .pdf-export-mode .dashboard-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 32px !important; width: 100% !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; }
+        .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; }
         
         .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
