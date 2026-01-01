@@ -53,7 +53,8 @@ export function Dashboard({
     
     const element = dashboardRef.current;
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
-    const width = 1400; // 表が収まるように幅を拡大
+    // 1枚の長いページとして出力するためのサイズ計算
+    const width = 1500; // さらに幅を拡大
     const height = element.scrollHeight + 100;
     
     const opt = {
@@ -65,7 +66,7 @@ export function Dashboard({
         useCORS: true,
         letterRendering: true,
         backgroundColor: '#f8fafc',
-        windowWidth: 1400, // レンダリング用の幅も拡大
+        windowWidth: 1500, // レンダリング用の幅も拡大
         scrollY: 0
       },
       jsPDF: { 
@@ -90,7 +91,7 @@ export function Dashboard({
   const categoryData = useMemo(() => calculateCategoryData(expenses, selectedMonth), [expenses, selectedMonth]);
   const monthComparisonData = useMemo(() => calculateMonthComparison(expenses, selectedMonth), [expenses, selectedMonth]);
   const spendingRanking = useMemo(() => getSpendingRanking(expenses, selectedMonth), [expenses, selectedMonth]);
-  const recentTransactions = useMemo(() => getRecentTransactions(expenses, 10), [expenses]);
+  const recentTransactions = useMemo(() => getRecentTransactions(expenses, 50), [expenses]);
   const yearlySummary = useMemo(() => calculateYearlySummary(expenses, selectedYear), [expenses, selectedYear]);
   const yearlyCategoryData = useMemo(() => calculateYearlyCategoryData(expenses, selectedYear), [expenses, selectedYear]);
   const categoryMonthlyTableData = useMemo(() => calculateCategoryMonthlyTable(expenses, selectedYear), [expenses, selectedYear]);
