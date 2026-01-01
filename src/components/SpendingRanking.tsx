@@ -7,7 +7,7 @@ interface SpendingRankingProps {
   title?: string;
 }
 
-export function SpendingRanking({ data, title = '今月の支出TOP5' }: SpendingRankingProps) {
+export function SpendingRanking({ data, title = '今月の支出TOP10' }: SpendingRankingProps) {
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy size={18} className="rank-icon gold" />;
     if (rank === 2) return <Medal size={18} className="rank-icon silver" />;
@@ -26,7 +26,7 @@ export function SpendingRanking({ data, title = '今月の支出TOP5' }: Spendin
         {data.length === 0 ? (
           <div className="no-data">データがありません</div>
         ) : (
-          data.slice(0, 5).map((item, index) => (
+          data.slice(0, 10).map((item, index) => (
             <div key={index} className="ranking-item">
               <div className="ranking-position">
                 {getRankIcon(index + 1)}

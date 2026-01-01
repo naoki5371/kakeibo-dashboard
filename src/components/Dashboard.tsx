@@ -159,28 +159,28 @@ export function Dashboard({
         <div className="dashboard-grid">
           {/* 2. 月間詳細 2カラム */}
           <div className="animate-fade-in"><CategoryPieChart data={categoryData} title={`${monthLabel}のカテゴリ別支出`} /></div>
-          <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP5`} /></div>
+          <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP10`} /></div>
 
           {/* 3. 比較・履歴 2カラム */}
-          <div className="animate-fade-in">
+          <div className="animate-fade-in section-margin-top">
             <MonthComparison 
               data={monthComparisonData} 
               currentMonthLabel={monthLabel} 
               previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} 
             />
           </div>
-          <div className="animate-fade-in"><RecentTransactions data={recentTransactions} /></div>
+          <div className="animate-fade-in section-margin-top"><RecentTransactions data={recentTransactions} /></div>
 
           {/* 4. 年間集計 2カラム */}
-          <div className="animate-fade-in"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
-          <div className="animate-fade-in"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
+          <div className="animate-fade-in section-margin-top"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
+          <div className="animate-fade-in section-margin-top"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
         </div>
 
         {/* 5. 推移 1カラム */}
-        <div className="animate-fade-in section-margin"><MonthlyChart data={monthlyData} /></div>
+        <div className="animate-fade-in section-margin-large"><MonthlyChart data={monthlyData} /></div>
 
         {/* 6. 一覧表 1カラム */}
-        <div className="section-margin"><CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} /></div>
+        <div className="section-margin-large"><CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} /></div>
       </div>
 
       <style>{`
@@ -196,13 +196,15 @@ export function Dashboard({
         
         .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); transition: all 0.3s ease; }
         .section-margin { margin-top: 32px; }
+        .section-margin-top { margin-top: 24px; }
+        .section-margin-large { margin-top: 48px; }
         
         .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
         .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 40px !important; width: 100% !important; }
         .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 40px !important; }
         .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
         .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
-        .pdf-export-mode .section-margin { margin-top: 40px; }
+        .pdf-export-mode .section-margin, .pdf-export-mode .section-margin-top, .pdf-export-mode .section-margin-large { margin-top: 48px !important; }
         
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
         .summary-card-icon { width: 80px; height: 80px; background: rgba(244, 63, 94, 0.1); color: var(--color-expense); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
