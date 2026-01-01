@@ -143,7 +143,11 @@ export function CategoryPieChart({ data, title = '今月のカテゴリ別支出
 
         .category-list-container { border-top: 1px solid var(--color-border); padding-top: 24px; }
         .list-title { font-size: 0.9rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 16px; }
-        .category-full-list { display: flex; flex-direction: column; gap: 8px; }
+        .category-full-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        
+        /* スクロールバーのデザイン */
+        .category-full-list::-webkit-scrollbar { width: 4px; }
+        .category-full-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
         
         .category-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--color-bg-primary); border-radius: var(--radius-md); border: 1px solid transparent; transition: all 0.2s ease; }
         .category-list-item:hover { background: var(--color-bg-hover); border-color: var(--color-border); }
