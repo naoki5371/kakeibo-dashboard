@@ -22,7 +22,6 @@ import { CategoryPieChart } from './CategoryPieChart';
 import { YearlySummary } from './YearlySummary';
 import { MonthComparison } from './MonthComparison';
 import { SpendingRanking } from './SpendingRanking';
-import { MonthlyTrend } from './MonthlyTrend';
 import { RecentTransactions } from './RecentTransactions';
 import { MonthSelector } from './MonthSelector';
 import { CategoryMonthlyTable } from './CategoryMonthlyTable';
@@ -92,7 +91,6 @@ export function Dashboard({
   const categoryData = useMemo(() => calculateCategoryData(expenses, selectedMonth), [expenses, selectedMonth]);
   const monthComparisonData = useMemo(() => calculateMonthComparison(expenses, selectedMonth), [expenses, selectedMonth]);
   const spendingRanking = useMemo(() => getSpendingRanking(expenses, selectedMonth), [expenses, selectedMonth]);
-  const trendData = useMemo(() => calculateMonthlyTrend(expenses, 6), [expenses]);
   const recentTransactions = useMemo(() => getRecentTransactions(expenses, 10), [expenses]);
   const yearlySummary = useMemo(() => calculateYearlySummary(expenses, selectedYear), [expenses, selectedYear]);
   const yearlyCategoryData = useMemo(() => calculateYearlyCategoryData(expenses, selectedYear), [expenses, selectedYear]);
