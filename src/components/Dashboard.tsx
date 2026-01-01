@@ -51,16 +51,20 @@ export function Dashboard({
     
     setIsExporting(true);
     
-    // グラフやアニメーションの完了を確実に待つ
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // レイアウト変更がブラウザに反映されるのを待つ
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     const element = dashboardRef.current;
     
     // 表示中の月からファイル名を生成 (例: 2026.01 家計簿ダッシュボード)
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
     
+    // 1枚の長いページとして出力するためのサイズ計算
+    const width = 1100; // 固定幅
+    const height = element.scrollHeight + 100; // コンテンツの高さ + 余白
+    
     const opt = {
-      margin: 10,
+      margin: 0,
       filename: fileName,
       image: { type: 'jpeg' as const, quality: 1.0 },
       html2canvas: { 
@@ -68,18 +72,17 @@ export function Dashboard({
         useCORS: true,
         letterRendering: true,
         backgroundColor: '#f8fafc',
-        windowWidth: 1200, // デスクトップ基準の幅で描画
+        windowWidth: 1200,
+        scrollY: 0
       },
       jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait' as const,
-        compress: true
+        unit: 'px' as const, 
+        format: [width, height] as [number, number],
+        hotfixes: ['px_scaling'] as any
       }
     };
 
     try {
-      // html2pdfの自動改ページ機能を活用しつつ、崩れを防ぐ
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error('PDF export failed:', error);
@@ -256,11 +259,12 @@ export function Dashboard({
         
         .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); transition: all 0.3s ease; }
         
-        .pdf-export-mode { background: #f8fafc !important; width: 1000px !important; padding: 40px !important; margin: 0 auto !important; }
-        .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 32px !important; width: 100% !important; }
-        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; }
-        .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; }
+        .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
+        .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 40px !important; width: 100% !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 0 !important; }
+        .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
         .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
+        .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
         
         .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
