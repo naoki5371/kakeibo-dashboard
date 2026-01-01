@@ -115,7 +115,7 @@ export function calculateCategoryData(
     })
     .map(([category, amount]) => {
       // 色の決定（01 食費 などの場合、数字を除いた名前で色を探す）
-      const cleanName = category.replace(/^\d+[\s　-_]*/, '');
+      const cleanName = category.replace(/^\d+[\s　._-]*/, '');
       const color = CATEGORY_COLORS[category] || CATEGORY_COLORS[cleanName] || DEFAULT_COLORS[colorIndex++ % DEFAULT_COLORS.length];
       
       return {
