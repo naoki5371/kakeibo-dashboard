@@ -82,11 +82,17 @@ export function calculateCategoryData(
   expenses: ExpenseRecord[],
   targetMonth?: Date
 ): CategoryData[] {
+  // すべての定義済みカテゴリで初期化（0円で埋める）
   const categoryMap = new Map<string, number>();
+  Object.keys(CATEGORY_COLORS).forEach(cat => {
+    categoryMap.set(cat, 0);
+  });
+  
   const now = targetMonth || new Date();
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
   
+  // カテゴリ別に集計
   for (const expense of expenses) {
     const date = getExpenseDate(expense);
     if (date && isWithinInterval(date, { start: monthStart, end: monthEnd })) {
@@ -95,10 +101,13 @@ export function calculateCategoryData(
     }
   }
   
+  // 合計を計算（パーセンテージ算出用）
   const total = Array.from(categoryMap.values()).reduce((sum, val) => sum + val, 0);
+  
+  // 配列に変換（金額順にソート）
   let colorIndex = 0;
   return Array.from(categoryMap.entries())
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => b[1] - a[1]) // 金額が多い順
     .map(([category, amount]) => {
       const color = CATEGORY_COLORS[category] || DEFAULT_COLORS[colorIndex++ % DEFAULT_COLORS.length];
       return {
