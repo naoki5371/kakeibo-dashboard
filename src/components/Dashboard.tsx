@@ -156,24 +156,24 @@ export function Dashboard({
           </div>
         </div>
 
-        <div className="dashboard-grid">
+        <div className="dashboard-grid section-margin-large">
           {/* 2. 月間詳細 2カラム */}
           <div className="animate-fade-in"><CategoryPieChart data={categoryData} title={`${monthLabel}のカテゴリ別支出`} /></div>
           <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP10`} /></div>
 
           {/* 3. 比較・履歴 2カラム */}
-          <div className="animate-fade-in section-margin-top">
+          <div className="animate-fade-in">
             <MonthComparison 
               data={monthComparisonData} 
               currentMonthLabel={monthLabel} 
               previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} 
             />
           </div>
-          <div className="animate-fade-in section-margin-top"><RecentTransactions data={recentTransactions} /></div>
+          <div className="animate-fade-in"><RecentTransactions data={recentTransactions} /></div>
 
           {/* 4. 年間集計 2カラム */}
-          <div className="animate-fade-in section-margin-top"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
-          <div className="animate-fade-in section-margin-top"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
+          <div className="animate-fade-in"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
+          <div className="animate-fade-in"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
         </div>
 
         {/* 5. 推移 1カラム */}
@@ -195,16 +195,22 @@ export function Dashboard({
         @media print { .hide-on-pdf { display: none !important; } }
         
         .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); transition: all 0.3s ease; }
-        .section-margin { margin-top: 32px; }
-        .section-margin-top { margin-top: 24px; }
-        .section-margin-large { margin-top: 48px; }
+        .section-margin { margin-top: 40px; }
+        .section-margin-top { margin-top: 32px; }
+        .section-margin-large { margin-top: 56px; }
         
         .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
-        .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 40px !important; width: 100% !important; }
-        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 40px !important; }
+        .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 48px !important; width: 100% !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 0 !important; }
         .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
         .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
-        .pdf-export-mode .section-margin, .pdf-export-mode .section-margin-top, .pdf-export-mode .section-margin-large { margin-top: 48px !important; }
+        .pdf-export-mode .section-margin, .pdf-export-mode .section-margin-top, .pdf-export-mode .section-margin-large { margin-top: 56px !important; }
+        .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
+        .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
+        .pdf-export-mode .table-container { overflow: visible !important; width: 100% !important; }
+        .pdf-export-mode .analysis-table { font-size: 0.7rem !important; }
+        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { padding: 6px 4px !important; min-width: auto !important; }
+        .pdf-export-mode .sticky-col { position: static !important; border-right: 1px solid #e2e8f0 !important; min-width: 100px !important; }
         
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
         .summary-card-icon { width: 80px; height: 80px; background: rgba(244, 63, 94, 0.1); color: var(--color-expense); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
@@ -214,7 +220,7 @@ export function Dashboard({
         .summary-card-stats { display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--color-border); padding-left: 32px; }
         .stat-item { display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.95rem; }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
 
         @media (max-width: 1000px) {
           .summary-card.expense-primary { flex-direction: column; text-align: center; gap: 24px; padding: 32px; }
