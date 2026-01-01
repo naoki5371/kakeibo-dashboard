@@ -35,7 +35,7 @@ export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRanking
                     className="ranking-bar"
                     style={{
                       width: `${item.percentage}%`,
-                      background: item.color,
+                      background: 'var(--color-coral-red)',
                     }}
                   />
                 </div>
@@ -47,7 +47,7 @@ export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRanking
       </div>
 
       <style>{`
-        .spending-ranking { min-height: 400px; }
+        .spending-ranking { min-height: auto; }
         .ranking-list { display: flex; flex-direction: column; gap: 24px; }
         .ranking-item { display: flex; flex-direction: column; }
         

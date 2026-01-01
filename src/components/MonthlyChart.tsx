@@ -49,12 +49,13 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
               name="支出" 
               radius={[6, 6, 0, 0]} 
               barSize={32}
+              fill="var(--color-coral-red)"
             >
               {data.map((_, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={index === data.length - 1 ? 'var(--color-accent)' : 'var(--color-text-muted)'} 
-                  fillOpacity={index === data.length - 1 ? 1 : 0.2}
+                  fill={index === data.length - 1 ? 'var(--color-coral-red)' : 'var(--color-coral-red)'} 
+                  fillOpacity={index === data.length - 1 ? 1 : 0.3}
                 />
               ))}
             </Bar>

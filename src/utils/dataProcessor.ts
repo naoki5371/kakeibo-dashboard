@@ -177,7 +177,7 @@ export function calculateMonthComparison(expenses: ExpenseRecord[], targetMonth?
   }).filter(item => item.currentMonth > 0 || item.previousMonth > 0);
 }
 
-export function getSpendingRanking(expenses: ExpenseRecord[], targetMonth?: Date, limit: number = 5): CategoryData[] {
+export function getSpendingRanking(expenses: ExpenseRecord[], targetMonth?: Date, limit: number = 10): CategoryData[] {
   // ランキングは金額順
   return [...calculateCategoryData(expenses, targetMonth)]
     .sort((a, b) => b.amount - a.amount)

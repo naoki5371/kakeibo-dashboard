@@ -10,9 +10,12 @@
   --color-text-secondary: #64748b;
   --color-text-muted: #94a3b8;
   
-  --color-accent: #fb7185; /* 添付画像に近いコーラルレッド */
-  --color-accent-hover: #f43f5e;
+  --color-accent: #334155;
+  --color-accent-hover: #1e293b;
   --color-border: #f1f5f9;
+  
+  --color-coral-red: #fb7185;
+  --color-coral-red-soft: rgba(251, 113, 133, 0.1);
   
   --color-expense: #fb7185;
   

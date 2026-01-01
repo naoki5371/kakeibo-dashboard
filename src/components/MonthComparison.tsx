@@ -63,14 +63,14 @@ export function MonthComparison({ data, currentMonthLabel, previousMonthLabel }:
             />
             <Bar 
               dataKey={previousMonthLabel} 
-              fill="var(--color-text-muted)" 
+              fill="var(--color-accent)" 
               fillOpacity={0.2} 
               radius={[0, 4, 4, 0]} 
               barSize={12}
             />
             <Bar 
               dataKey={currentMonthLabel} 
-              fill="var(--color-accent)" 
+              fill="var(--color-coral-red)" 
               radius={[0, 4, 4, 0]} 
               barSize={12}
             />
