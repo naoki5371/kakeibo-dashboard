@@ -60,11 +60,22 @@ function renderCustomLabel(props: any) {
   );
 }
 
+// データをRechartsが期待する形式に変換
+interface ChartDataItem {
+  category: string;
+  amount: number;
+  percentage: number;
+  color: string;
+  [key: string]: string | number;
+}
+
 export function CategoryPieChart({ data, title = '今月のカテゴリ別支出' }: CategoryPieChartProps) {
   const total = data.reduce((sum, item) => sum + item.amount, 0);
   
   // グラフには支出があるものだけ表示
-  const chartData = data.filter(item => item.amount > 0);
+  const chartData: ChartDataItem[] = data
+    .filter(item => item.amount > 0)
+    .map(item => ({ ...item }));
 
   return (
     <div className="card category-pie-chart">
