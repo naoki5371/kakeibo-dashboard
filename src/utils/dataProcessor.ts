@@ -260,14 +260,12 @@ export interface CategoryMonthlyTableData {
   }[];
 }
 
-export function calculateCategoryMonthlyTable(expenses: ExpenseRecord[], monthsCount: number = 6): CategoryMonthlyTableData {
-  const now = new Date();
+export function calculateCategoryMonthlyTable(expenses: ExpenseRecord[], year: number): CategoryMonthlyTableData {
   const months: string[] = [];
   
-  // 月のラベルを作成 (例: 1月, 2月...)
-  for (let i = monthsCount - 1; i >= 0; i--) {
-    const date = subMonths(now, i);
-    months.push(format(date, 'M月', { locale: ja }));
+  // 1月から12月までのラベルを作成
+  for (let m = 1; m <= 12; m++) {
+    months.push(`${m}月`);
   }
 
   // カテゴリごとのデータを初期化
@@ -278,9 +276,9 @@ export function calculateCategoryMonthlyTable(expenses: ExpenseRecord[], monthsC
   }));
 
   // 各月のデータを集計
-  for (let i = monthsCount - 1; i >= 0; i--) {
-    const targetDate = subMonths(now, i);
-    const monthLabel = format(targetDate, 'M月', { locale: ja });
+  for (let m = 1; m <= 12; m++) {
+    const monthLabel = `${m}月`;
+    const targetDate = new Date(year, m - 1, 1);
     const monthData = calculateCategoryData(expenses, targetDate);
     
     monthData.forEach(item => {

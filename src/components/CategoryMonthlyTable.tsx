@@ -4,14 +4,15 @@ import { formatCurrency } from '../utils/dataProcessor';
 
 interface CategoryMonthlyTableProps {
   data: CategoryMonthlyTableData;
+  year: number;
 }
 
-export function CategoryMonthlyTable({ data }: CategoryMonthlyTableProps) {
+export function CategoryMonthlyTable({ data, year }: CategoryMonthlyTableProps) {
   return (
     <div className="card category-monthly-table">
       <h3 className="card-title">
         <Table size={20} />
-        カテゴリ別・月別支出推移表
+        {year}年 カテゴリ別・月別支出推移表
       </h3>
 
       <div className="table-container">
@@ -22,7 +23,7 @@ export function CategoryMonthlyTable({ data }: CategoryMonthlyTableProps) {
               {data.months.map(month => (
                 <th key={month}>{month}</th>
               ))}
-              <th className="total-col">期間合計</th>
+              <th className="total-col">年間合計</th>
             </tr>
           </thead>
           <tbody>
@@ -33,7 +34,7 @@ export function CategoryMonthlyTable({ data }: CategoryMonthlyTableProps) {
                 </td>
                 {data.months.map(month => (
                   <td key={month} className="amount-cell">
-                    {row.data[month] > 0 ? formatCurrency(row.data[month]) : '-'}
+                    {formatCurrency(row.data[month] || 0)}
                   </td>
                 ))}
                 <td className="total-cell">

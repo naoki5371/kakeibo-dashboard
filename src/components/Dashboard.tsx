@@ -135,8 +135,8 @@ export function Dashboard({
   );
 
   const categoryMonthlyTableData = useMemo(
-    () => calculateCategoryMonthlyTable(expenses, 6),
-    [expenses]
+    () => calculateCategoryMonthlyTable(expenses, selectedYear),
+    [expenses, selectedYear]
   );
 
   const selectedMonthSummary = useMemo(() => {
@@ -250,7 +250,7 @@ export function Dashboard({
 
         {/* カテゴリ別・月別一覧表（新規追加） */}
         <div className="animate-fade-in" style={{ animationDelay: '800ms', marginTop: '32px' }}>
-          <CategoryMonthlyTable data={categoryMonthlyTableData} />
+          <CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} />
         </div>
       </div>
 
