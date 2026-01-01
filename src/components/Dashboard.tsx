@@ -50,20 +50,13 @@ export function Dashboard({
   // PDF出力処理
   const handleExportPDF = async () => {
     if (!dashboardRef.current) return;
-    
     setIsExporting(true);
-    
-    // レイアウト変更がブラウザに完全に反映されるのを待つ
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const element = dashboardRef.current;
-    
-    // 表示中の月からファイル名を生成 (例: 2026.01 家計簿ダッシュボード)
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
-    
-    // 1枚の長いページとして出力するためのサイズ計算
-    const width = 1100; // 固定幅
-    const height = element.scrollHeight + 100; // コンテンツの高さ + 余白
+    const width = 1100;
+    const height = element.scrollHeight + 100;
     
     const opt = {
       margin: 0,
@@ -94,50 +87,16 @@ export function Dashboard({
     }
   };
 
-  const monthlyData = useMemo(
-    () => calculateMonthlyData(expenses, 12),
-    [expenses]
-  );
-
-  const categoryData = useMemo(
-    () => calculateCategoryData(expenses, selectedMonth),
-    [expenses, selectedMonth]
-  );
-
-  const monthComparisonData = useMemo(
-    () => calculateMonthComparison(expenses, selectedMonth),
-    [expenses, selectedMonth]
-  );
-
-  const spendingRanking = useMemo(
-    () => getSpendingRanking(expenses, selectedMonth),
-    [expenses, selectedMonth]
-  );
-
-  const trendData = useMemo(
-    () => calculateMonthlyTrend(expenses, 6),
-    [expenses]
-  );
-
-  const recentTransactions = useMemo(
-    () => getRecentTransactions(expenses, 10),
-    [expenses]
-  );
-
-  const yearlySummary = useMemo(
-    () => calculateYearlySummary(expenses, selectedYear),
-    [expenses, selectedYear]
-  );
-
-  const yearlyCategoryData = useMemo(
-    () => calculateYearlyCategoryData(expenses, selectedYear),
-    [expenses, selectedYear]
-  );
-
-  const categoryMonthlyTableData = useMemo(
-    () => calculateCategoryMonthlyTable(expenses, selectedYear),
-    [expenses, selectedYear]
-  );
+  // データ集計
+  const monthlyData = useMemo(() => calculateMonthlyData(expenses, 12), [expenses]);
+  const categoryData = useMemo(() => calculateCategoryData(expenses, selectedMonth), [expenses, selectedMonth]);
+  const monthComparisonData = useMemo(() => calculateMonthComparison(expenses, selectedMonth), [expenses, selectedMonth]);
+  const spendingRanking = useMemo(() => getSpendingRanking(expenses, selectedMonth), [expenses, selectedMonth]);
+  const trendData = useMemo(() => calculateMonthlyTrend(expenses, 6), [expenses]);
+  const recentTransactions = useMemo(() => getRecentTransactions(expenses, 10), [expenses]);
+  const yearlySummary = useMemo(() => calculateYearlySummary(expenses, selectedYear), [expenses, selectedYear]);
+  const yearlyCategoryData = useMemo(() => calculateYearlyCategoryData(expenses, selectedYear), [expenses, selectedYear]);
+  const categoryMonthlyTableData = useMemo(() => calculateCategoryMonthlyTable(expenses, selectedYear), [expenses, selectedYear]);
 
   const selectedMonthSummary = useMemo(() => {
     const monthKey = format(selectedMonth, 'M月', { locale: ja });
@@ -154,9 +113,7 @@ export function Dashboard({
         <AlertCircle size={48} />
         <h2>データの取得に失敗しました</h2>
         <p>{error}</p>
-        <button className="btn btn-primary" onClick={onRefresh}>
-          <RefreshCw size={18} /> 再試行
-        </button>
+        <button className="btn btn-primary" onClick={onRefresh}><RefreshCw size={18} /> 再試行</button>
       </div>
     );
   }
@@ -166,16 +123,10 @@ export function Dashboard({
       <div className="dashboard-header">
         <div className="dashboard-title-section">
           <h1 className="dashboard-title">支出分析ダッシュボード</h1>
-          {lastUpdated && (
-            <span className="last-updated">最終更新: {lastUpdated.toLocaleTimeString('ja-JP')}</span>
-          )}
+          {lastUpdated && <span className="last-updated">最終更新: {lastUpdated.toLocaleTimeString('ja-JP')}</span>}
         </div>
         <div className="dashboard-actions">
-          <button 
-            className="btn btn-secondary pdf-btn" 
-            onClick={handleExportPDF} 
-            disabled={loading || isExporting}
-          >
+          <button className="btn btn-secondary pdf-btn" onClick={handleExportPDF} disabled={loading || isExporting}>
             <Download size={18} className={isExporting ? 'animate-pulse' : ''} />
             {isExporting ? '出力中...' : 'PDFを出力'}
           </button>
@@ -191,16 +142,13 @@ export function Dashboard({
           <MonthSelector selectedMonth={selectedMonth} onMonthChange={setSelectedMonth} />
         </div>
 
-        <div className="summary-cards single-card">
+        {/* 1. 今月の総支出 */}
+        <div className="summary-cards single-card section-margin">
           <div className="summary-card expense-primary animate-fade-in">
-            <div className="summary-card-icon">
-              <TrendingDown size={32} />
-            </div>
+            <div className="summary-card-icon"><TrendingDown size={32} /></div>
             <div className="summary-card-content">
               <span className="summary-card-label">{isCurrentMonth ? '今月' : monthLabel}の総支出</span>
-              <span className="summary-card-value amount-expense-large">
-                {formatCurrency(selectedMonthSummary.expense)}
-              </span>
+              <span className="summary-card-value amount-expense-large">{formatCurrency(selectedMonthSummary.expense)}</span>
             </div>
             <div className="summary-card-stats hide-on-pdf">
               <div className="stat-item">
@@ -212,46 +160,30 @@ export function Dashboard({
         </div>
 
         <div className="dashboard-grid">
-          <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
-            <YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} />
-          </div>
+          {/* 2. 月間詳細 2カラム */}
+          <div className="animate-fade-in"><CategoryPieChart data={categoryData} title={`${monthLabel}のカテゴリ別支出`} /></div>
+          <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP5`} /></div>
 
-          <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
-            <CategoryPieChart 
-              data={yearlyCategoryData} 
-              title={`${selectedYear}年の年間カテゴリ別支出`}
+          {/* 3. 比較・履歴 2カラム */}
+          <div className="animate-fade-in">
+            <MonthComparison 
+              data={monthComparisonData} 
+              currentMonthLabel={monthLabel} 
+              previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} 
             />
           </div>
+          <div className="animate-fade-in"><RecentTransactions data={recentTransactions} /></div>
 
-          <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-            <MonthlyChart data={monthlyData} />
-          </div>
-
-          <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
-            <CategoryPieChart data={categoryData} title={`${isCurrentMonth ? '今月' : monthLabel}のカテゴリ別支出`} />
-          </div>
-
-          <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-            <SpendingRanking data={spendingRanking} title={`${isCurrentMonth ? '今月' : monthLabel}の支出TOP5`} />
-          </div>
-
-          <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
-            <MonthComparison data={monthComparisonData} currentMonthLabel={monthLabel} previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })} />
-          </div>
-
-          <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
-            <RecentTransactions data={recentTransactions} />
-          </div>
-
-          <div className="animate-fade-in" style={{ animationDelay: '700ms' }}>
-            <MonthlyTrend data={trendData} />
-          </div>
+          {/* 4. 年間集計 2カラム */}
+          <div className="animate-fade-in"><YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} /></div>
+          <div className="animate-fade-in"><CategoryPieChart data={yearlyCategoryData} title={`${selectedYear}年の年間カテゴリ別支出`} /></div>
         </div>
 
-        {/* カテゴリ別・月別一覧表（新規追加） */}
-        <div style={{ marginTop: '48px' }}>
-          <CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} />
-        </div>
+        {/* 5. 推移 1カラム */}
+        <div className="animate-fade-in section-margin"><MonthlyChart data={monthlyData} /></div>
+
+        {/* 6. 一覧表 1カラム */}
+        <div className="section-margin"><CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} /></div>
       </div>
 
       <style>{`
@@ -261,29 +193,20 @@ export function Dashboard({
         .last-updated { font-size: 0.8rem; color: var(--color-text-muted); }
         .dashboard-actions { display: flex; gap: 12px; align-items: center; }
         .pdf-btn:hover { border-color: var(--color-accent-secondary); color: var(--color-accent-secondary); }
-        
         .month-selector-container { margin-bottom: 32px; }
         
-        /* PDF出力時のスタイル調整 */
-        @media print {
-          .hide-on-pdf { display: none !important; }
-        }
+        @media print { .hide-on-pdf { display: none !important; } }
         
         .dashboard-content-to-export { background: transparent; padding: 4px; border-radius: var(--radius-xl); transition: all 0.3s ease; }
+        .section-margin { margin-top: 32px; }
         
         .pdf-export-mode { background: #f8fafc !important; width: 1100px !important; padding: 60px !important; margin: 0 !important; border-radius: 0 !important; overflow: visible !important; }
         .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 40px !important; width: 100% !important; }
-        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 0 !important; }
+        .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; break-inside: avoid !important; width: 100% !important; margin-bottom: 40px !important; }
         .pdf-export-mode .animate-fade-in { opacity: 1 !important; transform: none !important; animation: none !important; visibility: visible !important; }
         .pdf-export-mode .summary-card-content { white-space: nowrap !important; }
-        .pdf-export-mode .pie-chart-container { width: 100% !important; height: 350px !important; }
-        .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
-        .pdf-export-mode .table-container { overflow: visible !important; width: 100% !important; }
-        .pdf-export-mode .analysis-table { font-size: 0.7rem !important; }
-        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { padding: 6px 4px !important; min-width: auto !important; }
-        .pdf-export-mode .sticky-col { position: static !important; border-right: 1px solid #e2e8f0 !important; min-width: 100px !important; }
+        .pdf-export-mode .section-margin { margin-top: 40px; }
         
-        .summary-cards.single-card { margin-bottom: 32px; }
         .summary-card.expense-primary { display: flex; align-items: center; justify-content: space-between; padding: 40px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); border-left: 6px solid var(--color-expense); }
         .summary-card-icon { width: 80px; height: 80px; background: rgba(244, 63, 94, 0.1); color: var(--color-expense); border-radius: 20px; display: flex; align-items: center; justify-content: center; }
         .summary-card-content { flex: 1; margin-left: 32px; }
@@ -294,7 +217,7 @@ export function Dashboard({
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1000px) {
           .summary-card.expense-primary { flex-direction: column; text-align: center; gap: 24px; padding: 32px; }
           .summary-card-content { margin-left: 0; }
           .summary-card-stats { border-left: none; padding-left: 0; border-top: 1px solid var(--color-border); padding-top: 24px; width: 100%; justify-content: center; }
