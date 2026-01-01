@@ -231,7 +231,7 @@ export function Dashboard({
         .pdf-export-mode { background: #fafafa !important; width: 1500px !important; padding: 80px !important; margin: 0 !important; }
         .pdf-export-mode .dashboard-grid { display: flex !important; flex-direction: column !important; gap: 56px !important; }
         .pdf-export-mode .card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; margin-bottom: 0 !important; }
-        .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; background: #334155 !important; }
+        .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; background: #fb7185 !important; }
         .pdf-export-mode .section-margin-large { margin-top: 80px !important; }
         
         /* PDF出力時の文字の視認性向上 */

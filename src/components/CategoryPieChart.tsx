@@ -96,7 +96,7 @@ export function CategoryPieChart({ data, title = 'カテゴリ別支出' }: Cate
         <div className="category-list-container">
           <div className="category-full-list">
             {data.map((item, index) => (
-              <div key={index} className={`category-list-item ${item.amount === 0 ? 'zero-amount' : ''}`}>
+              <div key={index} className="category-list-item">
                 <div className="category-info">
                   <span className="category-dot" style={{ background: item.color }} />
                   <span className="category-name">{item.category}</span>

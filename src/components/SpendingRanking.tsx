@@ -47,7 +47,7 @@ export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRanking
       </div>
 
       <style>{`
-        .spending-ranking { min-height: 320px; }
+        .spending-ranking { min-height: 400px; }
         .ranking-list { display: flex; flex-direction: column; gap: 24px; }
         .ranking-item { display: flex; flex-direction: column; }
         
