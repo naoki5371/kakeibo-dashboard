@@ -85,6 +85,7 @@ export function calculateMonthlyData(expenses: ExpenseRecord[], months: number =
   }));
 }
 
+// カテゴリ別支出を集計
 export function calculateCategoryData(expenses: ExpenseRecord[], targetMonth?: Date): CategoryData[] {
   const categoryMap = new Map<string, number>();
   CATEGORY_MASTER.forEach(cat => categoryMap.set(cat, 0));
@@ -96,7 +97,6 @@ export function calculateCategoryData(expenses: ExpenseRecord[], targetMonth?: D
   for (const expense of expenses) {
     const date = getExpenseDate(expense);
     if (date && isWithinInterval(date, { start: monthStart, end: monthEnd })) {
-      // マスターにあるカテゴリのみ集計（空欄や定義外は無視）
       if (categoryMap.has(expense.category)) {
         const current = categoryMap.get(expense.category) || 0;
         categoryMap.set(expense.category, current + expense.amount);
@@ -106,7 +106,31 @@ export function calculateCategoryData(expenses: ExpenseRecord[], targetMonth?: D
   
   const total = Array.from(categoryMap.values()).reduce((sum, val) => sum + val, 0);
   
-  // 番号順（01〜14）で返す
+  return CATEGORY_MASTER.map((category) => ({
+    category,
+    amount: categoryMap.get(category) || 0,
+    percentage: total > 0 ? ((categoryMap.get(category) || 0) / total) * 100 : 0,
+    color: CATEGORY_COLORS[category] || '#95A5A6',
+  }));
+}
+
+// 年間のカテゴリ別支出を集計（新規追加）
+export function calculateYearlyCategoryData(expenses: ExpenseRecord[], targetYear: number): CategoryData[] {
+  const categoryMap = new Map<string, number>();
+  CATEGORY_MASTER.forEach(cat => categoryMap.set(cat, 0));
+  
+  for (const expense of expenses) {
+    const date = getExpenseDate(expense);
+    if (date && date.getFullYear() === targetYear) {
+      if (categoryMap.has(expense.category)) {
+        const current = categoryMap.get(expense.category) || 0;
+        categoryMap.set(expense.category, current + expense.amount);
+      }
+    }
+  }
+  
+  const total = Array.from(categoryMap.values()).reduce((sum, val) => sum + val, 0);
+  
   return CATEGORY_MASTER.map((category) => ({
     category,
     amount: categoryMap.get(category) || 0,

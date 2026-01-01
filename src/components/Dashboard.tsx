@@ -11,6 +11,7 @@ import {
   calculateMonthlyTrend,
   getRecentTransactions,
   calculateYearlySummary,
+  calculateYearlyCategoryData,
   formatCurrency,
 } from '../utils/dataProcessor';
 import { MonthlyChart } from './MonthlyChart';
@@ -72,6 +73,11 @@ export function Dashboard({
 
   const yearlySummary = useMemo(
     () => calculateYearlySummary(expenses, selectedYear),
+    [expenses, selectedYear]
+  );
+
+  const yearlyCategoryData = useMemo(
+    () => calculateYearlyCategoryData(expenses, selectedYear),
     [expenses, selectedYear]
   );
 
@@ -139,6 +145,14 @@ export function Dashboard({
       <div className="dashboard-grid">
         <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
           <YearlySummary data={yearlySummary} year={selectedYear} onYearChange={setSelectedYear} />
+        </div>
+
+        {/* 年間カテゴリ分析（新規追加） */}
+        <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
+          <CategoryPieChart 
+            data={yearlyCategoryData} 
+            title={`${selectedYear}年の年間カテゴリ別支出`}
+          />
         </div>
 
         <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
