@@ -56,7 +56,7 @@ export function Dashboard({
     const fileName = `${format(now, 'yyyy.MM.dd')}家計簿ダッシュボード.pdf`;
     
     const opt = {
-      margin: [10, 10],
+      margin: [10, 10] as [number, number],
       filename: fileName,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { 
