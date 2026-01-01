@@ -52,7 +52,7 @@ export function Dashboard({
     
     const element = dashboardRef.current;
     const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
-    const width = 1500; // 表が収まるように幅を拡大
+    const width = 1450; // PDFの基本幅
     const height = element.scrollHeight + 100;
     
     const opt = {
@@ -63,8 +63,8 @@ export function Dashboard({
         scale: 2, 
         useCORS: true,
         letterRendering: true,
-        backgroundColor: '#f8fafc',
-        windowWidth: 1500, // レンダリング用の幅も拡大
+        backgroundColor: '#fafafa',
+        windowWidth: 1450, // windowWidthを固定
         scrollY: 0
       },
       jsPDF: { 
@@ -198,13 +198,13 @@ export function Dashboard({
         
         .month-selector-container { margin-bottom: 40px; }
         
-        .pdf-export-mode .transaction-date, .pdf-export-mode .transaction-category, .pdf-export-mode .rank-num, .pdf-export-mode .ranking-percent-text, .pdf-export-mode .pie-chart-total-label, .pdf-export-mode .category-percent { color: #000000 !important; font-weight: 700 !important; opacity: 1 !important; }
+        .pdf-export-mode .transaction-date, .pdf-export-mode .transaction-category, .pdf-export-mode .rank-num, .pdf-export-mode .ranking-percent-text, .pdf-export-mode .pie-chart-total-label, .pdf-export-mode .category-percent { color: #000000 !important; opacity: 1 !important; }
         .pdf-export-mode .category-list-item.zero-amount { opacity: 1 !important; }
         .pdf-export-mode .transaction-category { background: transparent !important; border: 1px solid #000000 !important; }
         .pdf-export-mode .recharts-rectangle { fill-opacity: 1 !important; stroke-opacity: 1 !important; }
         .pdf-export-mode .recharts-bar-rectangle path { fill-opacity: 1 !important; }
         .pdf-export-mode .recharts-cartesian-grid-horizontal line, .pdf-export-mode .recharts-cartesian-grid-vertical line { stroke: #000000 !important; stroke-opacity: 0.3 !important; }
-        .pdf-export-mode svg text { fill: #000000 !important; font-weight: 800 !important; }
+        .pdf-export-mode svg text { fill: #000000 !important; }
         
         @media print { .hide-on-pdf { display: none !important; } }
         
@@ -242,17 +242,35 @@ export function Dashboard({
         .pdf-export-mode .main-summary-card { box-shadow: none !important; margin-bottom: 56px !important; background: #334155 !important; }
         .pdf-export-mode .section-margin-large { margin-top: 80px !important; }
         
-        /* PDF出力時の文字の視認性向上（極限までくっきりさせる） */
+        /* PDF出力時のバランス調整（読みやすさ重視） */
         .pdf-export-mode * { color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; opacity: 1 !important; }
         .pdf-export-mode .main-summary-card * { color: #ffffff !important; }
-        .pdf-export-mode h1, .pdf-export-mode h2, .pdf-export-mode h3 { font-weight: 900 !important; }
-        .pdf-export-mode span, .pdf-export-mode p, .pdf-export-mode div, .pdf-export-mode td, .pdf-export-mode th { font-weight: 700 !important; }
-        .pdf-export-mode .recharts-text { fill: #000000 !important; font-weight: 800 !important; }
-        .pdf-export-mode .recharts-legend-item-text { color: #000000 !important; font-weight: 800 !important; }
-        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { border: 1.5px solid #000000 !important; color: #000000 !important; font-weight: 700 !important; }
-        .pdf-export-mode .sticky-col { background: #ffffff !important; border-right: 1.5px solid #000000 !important; }
-        .pdf-export-mode .ranking-bar-container { background: #e2e8f0 !important; }
-        .pdf-export-mode .category-dot { border: 1px solid #000000 !important; }
+        .pdf-export-mode h1 { font-weight: 800 !important; font-size: 2.5rem !important; }
+        .pdf-export-mode h2, .pdf-export-mode h3 { font-weight: 700 !important; }
+        .pdf-export-mode span, .pdf-export-mode p, .pdf-export-mode div, .pdf-export-mode td, .pdf-export-mode th { font-weight: 400 !important; }
+        .pdf-export-mode .main-summary-value, .pdf-export-mode .pie-chart-total-amount, .pdf-export-mode .ranking-amount, .pdf-export-mode .amount-cell { font-weight: 700 !important; }
+        
+        .pdf-export-mode .recharts-text { fill: #000000 !important; font-weight: 500 !important; }
+        .pdf-export-mode .recharts-legend-item-text { color: #000000 !important; font-weight: 500 !important; }
+        
+        /* 表の見切れ対策 */
+        .pdf-export-mode .table-wrapper { border: none !important; }
+        .pdf-export-mode .table-container { overflow: visible !important; width: 1400px !important; }
+        .pdf-export-mode .analysis-table { table-layout: fixed !important; width: 1400px !important; border: 1px solid #000000 !important; }
+        .pdf-export-mode .analysis-table th, .pdf-export-mode .analysis-table td { 
+          border: 1px solid #000000 !important; 
+          padding: 8px 4px !important; 
+          font-size: 10px !important; 
+        }
+        .pdf-export-mode .sticky-col { position: static !important; width: 120px !important; min-width: 120px !important; border-right: 1px solid #000000 !important; }
+        .pdf-export-mode .month-col { width: 85px !important; min-width: 85px !important; }
+        .pdf-export-mode .total-col, .pdf-export-mode .total-cell { width: 100px !important; min-width: 100px !important; }
+        
+        /* カテゴリリストの見切れ対策 */
+        .pdf-export-mode .category-full-list { max-height: none !important; overflow: visible !important; }
+        .pdf-export-mode .category-list-item { page-break-inside: avoid; }
+        
+        .pdf-export-mode .recharts-rectangle { fill-opacity: 1 !important; stroke-opacity: 1 !important; }
 
         @media (max-width: 1100px) {
           .main-summary-card { padding: 40px; }
