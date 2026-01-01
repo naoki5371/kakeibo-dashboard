@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://YOUR_GITHUB_USERNAME.github.io/kakeibo-dashboard",
+  "homepage": "https://naoki5371.github.io/kakeibo-dashboard",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
