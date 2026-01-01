@@ -47,8 +47,8 @@ export function useSheetData(settings: AppSettings | null): UseSheetDataReturn {
 
     try {
       const [expenseData, incomeData] = await Promise.all([
-        fetchExpenseData(spreadsheetId, settings.expenseSheetName || '支出'),
-        fetchIncomeData(spreadsheetId, settings.incomeSheetName || '収入'),
+        fetchExpenseData(spreadsheetId, settings.expenseSheetName || '家計簿【支出】（回答）'),
+        fetchIncomeData(spreadsheetId, settings.incomeSheetName || '家計簿【収入】（回答）'),
       ]);
 
       setExpenses(expenseData);

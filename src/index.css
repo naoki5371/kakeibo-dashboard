@@ -1,38 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* カラーパレット - モダンな和風テイスト */
-  --color-bg-primary: #0f1419;
-  --color-bg-secondary: #1a2129;
-  --color-bg-card: #212a35;
-  --color-bg-hover: #2a3642;
+  /* ライトテーマ カラーパレット */
+  --color-bg-primary: #f8fafc;
+  --color-bg-secondary: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #f1f5f9;
   
-  --color-text-primary: #e8ecf1;
-  --color-text-secondary: #9aa5b1;
-  --color-text-muted: #5e6b7a;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
   
-  --color-accent-primary: #00d4aa;
-  --color-accent-secondary: #7c5cff;
-  --color-accent-tertiary: #ff6b9d;
+  --color-accent-primary: #10b981;
+  --color-accent-secondary: #6366f1;
+  --color-accent-tertiary: #f43f5e;
   
-  --color-income: #00d4aa;
-  --color-expense: #ff6b9d;
-  --color-balance-positive: #00d4aa;
-  --color-balance-negative: #ff6b9d;
+  --color-income: #10b981;
+  --color-expense: #f43f5e;
+  --color-balance-positive: #10b981;
+  --color-balance-negative: #f43f5e;
   
-  --color-border: #2a3642;
-  --color-border-hover: #3d4f5f;
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
   
   /* グラデーション */
-  --gradient-primary: linear-gradient(135deg, #00d4aa 0%, #7c5cff 100%);
-  --gradient-card: linear-gradient(145deg, rgba(33, 42, 53, 0.9) 0%, rgba(26, 33, 41, 0.95) 100%);
-  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(0, 212, 170, 0.15) 0%, transparent 50%);
+  --gradient-primary: linear-gradient(135deg, #10b981 0%, #6366f1 100%);
+  --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
   
   /* シャドウ */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 40px rgba(0, 212, 170, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 40px rgba(16, 185, 129, 0.15);
   
   /* ボーダーラジウス */
   --radius-sm: 8px;
@@ -157,11 +157,11 @@ body::before {
 
 /* カードスタイル */
 .card {
-  background: var(--gradient-card);
+  background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 24px;
-  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-normal);
 }
 
@@ -172,7 +172,7 @@ body::before {
 
 .card-title {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-secondary);
   margin-bottom: 16px;
   display: flex;
@@ -228,7 +228,7 @@ body::before {
 
 .btn-primary {
   background: var(--gradient-primary);
-  color: #0f1419;
+  color: white;
 }
 
 .btn-primary:hover {
@@ -237,13 +237,13 @@ body::before {
 }
 
 .btn-secondary {
-  background: var(--color-bg-hover);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
 }
 
 .btn-secondary:hover {
-  background: var(--color-border-hover);
+  background: var(--color-bg-hover);
   border-color: var(--color-accent-primary);
 }
 
@@ -259,7 +259,7 @@ body::before {
   padding: 12px 16px;
   font-size: 1rem;
   font-family: inherit;
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-primary);
@@ -269,7 +269,7 @@ body::before {
 .input:focus {
   outline: none;
   border-color: var(--color-accent-primary);
-  box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .input::placeholder {
@@ -298,12 +298,12 @@ body::before {
 }
 
 .badge-income {
-  background: rgba(0, 212, 170, 0.15);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--color-income);
 }
 
 .badge-expense {
-  background: rgba(255, 107, 157, 0.15);
+  background: rgba(244, 63, 94, 0.1);
   color: var(--color-expense);
 }
 
@@ -312,7 +312,7 @@ body::before {
   background: linear-gradient(
     90deg,
     var(--color-bg-hover) 0%,
-    var(--color-border-hover) 50%,
+    var(--color-border) 50%,
     var(--color-bg-hover) 100%
   );
   background-size: 200% 100%;

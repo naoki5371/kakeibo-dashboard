@@ -154,8 +154,8 @@ export function calculateCategoryData(
 }
 
 // 前月比較データを計算
-export function calculateMonthComparison(expenses: ExpenseRecord[]): MonthComparisonData[] {
-  const now = new Date();
+export function calculateMonthComparison(expenses: ExpenseRecord[], targetMonth?: Date): MonthComparisonData[] {
+  const now = targetMonth || new Date();
   const currentMonthStart = startOfMonth(now);
   const currentMonthEnd = endOfMonth(now);
   const previousMonth = subMonths(now, 1);

@@ -71,7 +71,7 @@ function WelcomeScreen({ onOpenSettings }: { onOpenSettings: () => void }) {
           background: var(--gradient-primary);
           border-radius: 32px;
           margin-bottom: 32px;
-          color: #0f1419;
+          color: white;
           box-shadow: var(--shadow-glow);
         }
 
@@ -208,9 +208,10 @@ export default function App() {
           align-items: center;
           justify-content: space-between;
           padding: 16px 24px;
-          background: rgba(15, 20, 25, 0.8);
+          background: rgba(255, 255, 255, 0.9);
           backdrop-filter: blur(10px);
           border-bottom: 1px solid var(--color-border);
+          box-shadow: var(--shadow-sm);
         }
 
         .nav-brand {

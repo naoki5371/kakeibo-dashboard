@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { RefreshCw, AlertCircle, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { format, startOfMonth, subMonths } from 'date-fns';
+import { ja } from 'date-fns/locale';
 import type { ExpenseRecord, IncomeRecord } from '../types';
 import {
   calculateMonthlyData,
@@ -18,6 +20,7 @@ import { MonthComparison } from './MonthComparison';
 import { SpendingRanking } from './SpendingRanking';
 import { MonthlyTrend } from './MonthlyTrend';
 import { RecentTransactions } from './RecentTransactions';
+import { MonthSelector } from './MonthSelector';
 
 interface DashboardProps {
   expenses: ExpenseRecord[];
@@ -36,25 +39,34 @@ export function Dashboard({
   lastUpdated,
   onRefresh,
 }: DashboardProps) {
+  // 選択中の月
+  const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
+  
+  // 選択中の年（年間サマリー用）
+  const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
+
   // データの集計
   const monthlyData = useMemo(
     () => calculateMonthlyData(expenses, incomes, 12),
     [expenses, incomes]
   );
 
+  // 選択された月のカテゴリ別支出
   const categoryData = useMemo(
-    () => calculateCategoryData(expenses),
-    [expenses]
+    () => calculateCategoryData(expenses, selectedMonth),
+    [expenses, selectedMonth]
   );
 
+  // 選択された月の前月比較
   const monthComparisonData = useMemo(
-    () => calculateMonthComparison(expenses),
-    [expenses]
+    () => calculateMonthComparison(expenses, selectedMonth),
+    [expenses, selectedMonth]
   );
 
+  // 選択された月の支出ランキング
   const spendingRanking = useMemo(
-    () => getSpendingRanking(expenses),
-    [expenses]
+    () => getSpendingRanking(expenses, selectedMonth),
+    [expenses, selectedMonth]
   );
 
   const trendData = useMemo(
@@ -68,15 +80,20 @@ export function Dashboard({
   );
 
   const yearlySummary = useMemo(
-    () => calculateYearlySummary(expenses, incomes),
-    [expenses, incomes]
+    () => calculateYearlySummary(expenses, incomes, selectedYear),
+    [expenses, incomes, selectedYear]
   );
 
-  // 今月のサマリー
-  const currentMonthSummary = useMemo(() => {
-    const current = monthlyData[monthlyData.length - 1];
-    return current || { income: 0, expense: 0, balance: 0 };
-  }, [monthlyData]);
+  // 選択された月のサマリー
+  const selectedMonthSummary = useMemo(() => {
+    const monthKey = format(selectedMonth, 'M月', { locale: ja });
+    const found = monthlyData.find(d => d.month === monthKey);
+    return found || { income: 0, expense: 0, balance: 0 };
+  }, [monthlyData, selectedMonth]);
+
+  // 月のラベル
+  const monthLabel = format(selectedMonth, 'M月', { locale: ja });
+  const isCurrentMonth = format(selectedMonth, 'yyyy-MM') === format(new Date(), 'yyyy-MM');
 
   if (error) {
     return (
@@ -114,16 +131,26 @@ export function Dashboard({
         </button>
       </div>
 
-      {/* 今月のサマリーカード */}
+      {/* 月選択 */}
+      <div className="month-selector-container">
+        <MonthSelector
+          selectedMonth={selectedMonth}
+          onMonthChange={setSelectedMonth}
+        />
+      </div>
+
+      {/* 選択月のサマリーカード */}
       <div className="summary-cards">
         <div className="summary-card income animate-fade-in" style={{ animationDelay: '0ms' }}>
           <div className="summary-card-icon">
             <TrendingUp size={24} />
           </div>
           <div className="summary-card-content">
-            <span className="summary-card-label">今月の収入</span>
+            <span className="summary-card-label">
+              {isCurrentMonth ? '今月' : monthLabel}の収入
+            </span>
             <span className="summary-card-value amount-income">
-              {formatCurrency(currentMonthSummary.income)}
+              {formatCurrency(selectedMonthSummary.income)}
             </span>
           </div>
         </div>
@@ -133,26 +160,30 @@ export function Dashboard({
             <TrendingDown size={24} />
           </div>
           <div className="summary-card-content">
-            <span className="summary-card-label">今月の支出</span>
+            <span className="summary-card-label">
+              {isCurrentMonth ? '今月' : monthLabel}の支出
+            </span>
             <span className="summary-card-value amount-expense">
-              {formatCurrency(currentMonthSummary.expense)}
+              {formatCurrency(selectedMonthSummary.expense)}
             </span>
           </div>
         </div>
 
         <div
-          className={`summary-card balance animate-fade-in ${currentMonthSummary.balance >= 0 ? 'positive' : 'negative'}`}
+          className={`summary-card balance animate-fade-in ${selectedMonthSummary.balance >= 0 ? 'positive' : 'negative'}`}
           style={{ animationDelay: '200ms' }}
         >
           <div className="summary-card-icon">
             <Wallet size={24} />
           </div>
           <div className="summary-card-content">
-            <span className="summary-card-label">今月の収支</span>
+            <span className="summary-card-label">
+              {isCurrentMonth ? '今月' : monthLabel}の収支
+            </span>
             <span
-              className={`summary-card-value ${currentMonthSummary.balance >= 0 ? 'amount-positive' : 'amount-negative'}`}
+              className={`summary-card-value ${selectedMonthSummary.balance >= 0 ? 'amount-positive' : 'amount-negative'}`}
             >
-              {formatCurrency(currentMonthSummary.balance)}
+              {formatCurrency(selectedMonthSummary.balance)}
             </span>
           </div>
         </div>
@@ -162,7 +193,11 @@ export function Dashboard({
       <div className="dashboard-grid">
         {/* 年間サマリー */}
         <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
-          <YearlySummary data={yearlySummary} />
+          <YearlySummary 
+            data={yearlySummary} 
+            year={selectedYear}
+            onYearChange={setSelectedYear}
+          />
         </div>
 
         {/* 月別収支グラフ */}
@@ -172,17 +207,27 @@ export function Dashboard({
 
         {/* カテゴリ別支出 */}
         <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
-          <CategoryPieChart data={categoryData} />
+          <CategoryPieChart 
+            data={categoryData} 
+            title={`${isCurrentMonth ? '今月' : monthLabel}のカテゴリ別支出`}
+          />
         </div>
 
         {/* 支出ランキング */}
         <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
-          <SpendingRanking data={spendingRanking} />
+          <SpendingRanking 
+            data={spendingRanking} 
+            title={`${isCurrentMonth ? '今月' : monthLabel}の支出TOP5`}
+          />
         </div>
 
         {/* 前月比較 */}
         <div className="animate-fade-in" style={{ animationDelay: '700ms' }}>
-          <MonthComparison data={monthComparisonData} />
+          <MonthComparison 
+            data={monthComparisonData}
+            currentMonthLabel={monthLabel}
+            previousMonthLabel={format(subMonths(selectedMonth, 1), 'M月', { locale: ja })}
+          />
         </div>
 
         {/* 直近取引 */}
@@ -207,7 +252,7 @@ export function Dashboard({
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          margin-bottom: 32px;
+          margin-bottom: 24px;
           flex-wrap: wrap;
           gap: 16px;
         }
@@ -243,6 +288,10 @@ export function Dashboard({
           to {
             transform: rotate(360deg);
           }
+        }
+
+        .month-selector-container {
+          margin-bottom: 24px;
         }
 
         .summary-cards {
@@ -384,4 +433,3 @@ export function Dashboard({
     </div>
   );
 }
-

@@ -10,8 +10,8 @@ interface SettingsProps {
 
 export function Settings({ settings, onSave, onClose }: SettingsProps) {
   const [spreadsheetId, setSpreadsheetId] = useState(settings?.spreadsheetId || '');
-  const [expenseSheetName, setExpenseSheetName] = useState(settings?.expenseSheetName || '支出');
-  const [incomeSheetName, setIncomeSheetName] = useState(settings?.incomeSheetName || '収入');
+  const [expenseSheetName, setExpenseSheetName] = useState(settings?.expenseSheetName || '家計簿【支出】（回答）');
+  const [incomeSheetName, setIncomeSheetName] = useState(settings?.incomeSheetName || '家計簿【収入】（回答）');
 
   useEffect(() => {
     if (settings) {
@@ -97,7 +97,7 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
                 className="input"
                 value={expenseSheetName}
                 onChange={e => setExpenseSheetName(e.target.value)}
-                placeholder="支出"
+                placeholder="家計簿【支出】（回答）"
               />
             </div>
 
@@ -111,7 +111,7 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
                 className="input"
                 value={incomeSheetName}
                 onChange={e => setIncomeSheetName(e.target.value)}
-                placeholder="収入"
+                placeholder="家計簿【収入】（回答）"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
           .settings-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -145,9 +145,10 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
             max-width: 520px;
             max-height: 90vh;
             overflow-y: auto;
-            background: var(--color-bg-secondary);
+            background: var(--color-bg-card);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
             animation: slideUp 0.3s ease;
           }
 

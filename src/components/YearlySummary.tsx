@@ -1,4 +1,4 @@
-import { Calendar, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { Calendar, TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '../utils/dataProcessor';
 
 interface YearlySummaryProps {
@@ -11,17 +11,57 @@ interface YearlySummaryProps {
     monthsWithData: number;
   };
   year?: number;
+  onYearChange?: (year: number) => void;
+  availableYears?: number[];
 }
 
-export function YearlySummary({ data, year }: YearlySummaryProps) {
+export function YearlySummary({ data, year, onYearChange, availableYears }: YearlySummaryProps) {
   const currentYear = year || new Date().getFullYear();
+  const canNavigate = onYearChange !== undefined;
+  
+  const handlePrevYear = () => {
+    if (onYearChange) {
+      onYearChange(currentYear - 1);
+    }
+  };
+
+  const handleNextYear = () => {
+    if (onYearChange && currentYear < new Date().getFullYear()) {
+      onYearChange(currentYear + 1);
+    }
+  };
+
+  const canGoNext = currentYear < new Date().getFullYear();
 
   return (
     <div className="card yearly-summary">
-      <h3 className="card-title">
-        <Calendar size={20} />
-        {currentYear}年 年間サマリー
-      </h3>
+      <div className="yearly-header">
+        <h3 className="card-title">
+          <Calendar size={20} />
+          年間サマリー
+        </h3>
+        
+        {canNavigate && (
+          <div className="year-selector">
+            <button
+              className="year-nav-btn"
+              onClick={handlePrevYear}
+              title="前年"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <span className="year-display">{currentYear}年</span>
+            <button
+              className="year-nav-btn"
+              onClick={handleNextYear}
+              disabled={!canGoNext}
+              title="次年"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="summary-grid">
         <div className="summary-item income">
@@ -75,6 +115,59 @@ export function YearlySummary({ data, year }: YearlySummaryProps) {
           grid-column: span 2;
         }
 
+        .yearly-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+
+        .yearly-header .card-title {
+          margin-bottom: 0;
+        }
+
+        .year-selector {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 4px;
+          background: var(--color-bg-primary);
+          border-radius: var(--radius-md);
+          border: 1px solid var(--color-border);
+        }
+
+        .year-nav-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          background: transparent;
+          border: none;
+          border-radius: var(--radius-sm);
+          color: var(--color-text-secondary);
+          cursor: pointer;
+          transition: all var(--transition-fast);
+        }
+
+        .year-nav-btn:hover:not(:disabled) {
+          background: var(--color-bg-hover);
+          color: var(--color-accent-primary);
+        }
+
+        .year-nav-btn:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+
+        .year-display {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--color-text-primary);
+          min-width: 60px;
+          text-align: center;
+        }
+
         .summary-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -95,6 +188,7 @@ export function YearlySummary({ data, year }: YearlySummaryProps) {
         .summary-item:hover {
           border-color: var(--color-border-hover);
           transform: translateY(-2px);
+          box-shadow: var(--shadow-sm);
         }
 
         .summary-icon {
@@ -108,27 +202,27 @@ export function YearlySummary({ data, year }: YearlySummaryProps) {
         }
 
         .summary-item.income .summary-icon {
-          background: rgba(0, 212, 170, 0.1);
+          background: rgba(16, 185, 129, 0.1);
           color: var(--color-income);
         }
 
         .summary-item.expense .summary-icon {
-          background: rgba(255, 107, 157, 0.1);
+          background: rgba(244, 63, 94, 0.1);
           color: var(--color-expense);
         }
 
         .summary-item.balance .summary-icon {
-          background: rgba(124, 92, 255, 0.1);
+          background: rgba(99, 102, 241, 0.1);
           color: var(--color-accent-secondary);
         }
 
         .summary-item.balance.positive .summary-icon {
-          background: rgba(0, 212, 170, 0.1);
+          background: rgba(16, 185, 129, 0.1);
           color: var(--color-income);
         }
 
         .summary-item.balance.negative .summary-icon {
-          background: rgba(255, 107, 157, 0.1);
+          background: rgba(244, 63, 94, 0.1);
           color: var(--color-expense);
         }
 
@@ -165,9 +259,14 @@ export function YearlySummary({ data, year }: YearlySummaryProps) {
           .yearly-summary {
             grid-column: span 1;
           }
+
+          .yearly-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
         }
       `}</style>
     </div>
   );
 }
-

@@ -84,29 +84,42 @@ export async function fetchExpenseData(
   })).filter(record => record.amount > 0);
 }
 
-// 収入データを取得
+// 収入データを取得（エラー時は空配列を返す）
 export async function fetchIncomeData(
   spreadsheetId: string,
   sheetName: string = '収入'
 ): Promise<IncomeRecord[]> {
-  const url = getSheetUrl(spreadsheetId, sheetName);
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch income data: ${response.statusText}`);
+  try {
+    const url = getSheetUrl(spreadsheetId, sheetName);
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      // 404エラー（シートが見つからない）の場合は空配列を返す
+      if (response.status === 404) {
+        console.warn(`収入シート "${sheetName}" が見つかりません。収入データなしで続行します。`);
+        return [];
+      }
+      throw new Error(`Failed to fetch income data: ${response.statusText}`);
+    }
+    
+    const text = await response.text();
+    const rows = parseGoogleSheetsResponse(text);
+    
+    // 最初の行はヘッダーなのでスキップ
+    const records = rows.slice(1).map((row): IncomeRecord => ({
+      timestamp: parseDateValue(row[0]),
+      item: String(row[1] ?? ''),
+      customDate: row[2] ? parseDateValue(row[2]) : null,
+      category: String(row[3] ?? ''),
+      amount: Number(row[4]) || 0,
+      incomeDate: parseDateValue(row[5]),
+    })).filter(record => record.amount > 0);
+    
+    return records;
+  } catch (error) {
+    // パースエラーなども含めて、エラーが発生した場合は空配列を返す
+    console.warn('収入データの取得中にエラーが発生しました:', error);
+    return [];
   }
-  
-  const text = await response.text();
-  const rows = parseGoogleSheetsResponse(text);
-  
-  // 最初の行はヘッダーなのでスキップ
-  return rows.slice(1).map((row): IncomeRecord => ({
-    timestamp: parseDateValue(row[0]),
-    item: String(row[1] ?? ''),
-    customDate: row[2] ? parseDateValue(row[2]) : null,
-    category: String(row[3] ?? ''),
-    amount: Number(row[4]) || 0,
-    incomeDate: parseDateValue(row[5]),
-  })).filter(record => record.amount > 0);
 }
 

@@ -4,9 +4,11 @@ import { formatCurrency, formatPercentage } from '../utils/dataProcessor';
 
 interface MonthComparisonProps {
   data: MonthComparisonData[];
+  currentMonthLabel?: string;
+  previousMonthLabel?: string;
 }
 
-export function MonthComparison({ data }: MonthComparisonProps) {
+export function MonthComparison({ data, currentMonthLabel = '今月', previousMonthLabel = '先月' }: MonthComparisonProps) {
   const sortedData = [...data]
     .filter(item => item.currentMonth > 0 || item.previousMonth > 0)
     .sort((a, b) => Math.abs(b.difference) - Math.abs(a.difference))
@@ -16,7 +18,7 @@ export function MonthComparison({ data }: MonthComparisonProps) {
     <div className="card month-comparison">
       <h3 className="card-title">
         <GitCompare size={20} />
-        前月比較
+        {currentMonthLabel} vs {previousMonthLabel}
       </h3>
 
       <div className="comparison-list">

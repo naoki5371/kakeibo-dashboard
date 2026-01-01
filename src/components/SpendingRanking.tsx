@@ -4,9 +4,10 @@ import { formatCurrency } from '../utils/dataProcessor';
 
 interface SpendingRankingProps {
   data: CategoryData[];
+  title?: string;
 }
 
-export function SpendingRanking({ data }: SpendingRankingProps) {
+export function SpendingRanking({ data, title = '今月の支出TOP5' }: SpendingRankingProps) {
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Trophy size={18} className="rank-icon gold" />;
     if (rank === 2) return <Medal size={18} className="rank-icon silver" />;
@@ -18,7 +19,7 @@ export function SpendingRanking({ data }: SpendingRankingProps) {
     <div className="card spending-ranking">
       <h3 className="card-title">
         <Trophy size={20} />
-        今月の支出TOP5
+        {title}
       </h3>
 
       <div className="ranking-list">
