@@ -249,3 +249,48 @@ export function formatCurrency(amount: number): string {
 export function formatPercentage(value: number): string {
   return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
 }
+
+// カテゴリ別月別一覧表のデータを生成（新規追加）
+export interface CategoryMonthlyTableData {
+  months: string[];
+  rows: {
+    category: string;
+    data: { [month: string]: number };
+    total: number;
+  }[];
+}
+
+export function calculateCategoryMonthlyTable(expenses: ExpenseRecord[], monthsCount: number = 6): CategoryMonthlyTableData {
+  const now = new Date();
+  const months: string[] = [];
+  
+  // 月のラベルを作成 (例: 1月, 2月...)
+  for (let i = monthsCount - 1; i >= 0; i--) {
+    const date = subMonths(now, i);
+    months.push(format(date, 'M月', { locale: ja }));
+  }
+
+  // カテゴリごとのデータを初期化
+  const rows = CATEGORY_MASTER.map(category => ({
+    category,
+    data: {} as { [month: string]: number },
+    total: 0
+  }));
+
+  // 各月のデータを集計
+  for (let i = monthsCount - 1; i >= 0; i--) {
+    const targetDate = subMonths(now, i);
+    const monthLabel = format(targetDate, 'M月', { locale: ja });
+    const monthData = calculateCategoryData(expenses, targetDate);
+    
+    monthData.forEach(item => {
+      const row = rows.find(r => r.category === item.category);
+      if (row) {
+        row.data[monthLabel] = item.amount;
+        row.total += item.amount;
+      }
+    });
+  }
+
+  return { months, rows };
+}

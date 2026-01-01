@@ -14,6 +14,7 @@ import {
   getRecentTransactions,
   calculateYearlySummary,
   calculateYearlyCategoryData,
+  calculateCategoryMonthlyTable,
   formatCurrency,
 } from '../utils/dataProcessor';
 import { MonthlyChart } from './MonthlyChart';
@@ -24,6 +25,7 @@ import { SpendingRanking } from './SpendingRanking';
 import { MonthlyTrend } from './MonthlyTrend';
 import { RecentTransactions } from './RecentTransactions';
 import { MonthSelector } from './MonthSelector';
+import { CategoryMonthlyTable } from './CategoryMonthlyTable';
 
 interface DashboardProps {
   expenses: ExpenseRecord[];
@@ -130,6 +132,11 @@ export function Dashboard({
   const yearlyCategoryData = useMemo(
     () => calculateYearlyCategoryData(expenses, selectedYear),
     [expenses, selectedYear]
+  );
+
+  const categoryMonthlyTableData = useMemo(
+    () => calculateCategoryMonthlyTable(expenses, 6),
+    [expenses]
   );
 
   const selectedMonthSummary = useMemo(() => {
@@ -239,6 +246,11 @@ export function Dashboard({
           <div className="animate-fade-in" style={{ animationDelay: '700ms' }}>
             <MonthlyTrend data={trendData} />
           </div>
+        </div>
+
+        {/* カテゴリ別・月別一覧表（新規追加） */}
+        <div className="animate-fade-in" style={{ animationDelay: '800ms', marginTop: '32px' }}>
+          <CategoryMonthlyTable data={categoryMonthlyTableData} />
         </div>
       </div>
 
