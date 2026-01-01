@@ -44,12 +44,6 @@ const CATEGORY_MASTER = [
   '14 臨時出費',
 ];
 
-const DEFAULT_COLORS = [
-  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-  '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-  '#F8B500', '#E74C3C', '#95A5A6', '#58D68D', '#AF7AC5',
-];
-
 function parseDate(dateStr: string): Date | null {
   if (!dateStr) return null;
   const formats = ['yyyy/MM/dd', 'yyyy-MM-dd', 'yyyy/M/d'];
