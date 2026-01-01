@@ -55,8 +55,9 @@ export function Dashboard({
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const element = dashboardRef.current;
-    const now = new Date();
-    const fileName = `${format(now, 'yyyy.MM.dd')}家計簿ダッシュボード.pdf`;
+    
+    // 表示中の月からファイル名を生成 (例: 2026.01 家計簿ダッシュボード)
+    const fileName = `${format(selectedMonth, 'yyyy.MM')} 家計簿ダッシュボード.pdf`;
     
     const opt = {
       margin: 10,
