@@ -1,6 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect x="4" y="18" width="6" height="10" rx="1" fill="#334155"/>
-  <rect x="13" y="10" width="6" height="18" rx="1" fill="#334155"/>
-  <rect x="22" y="4" width="6" height="24" rx="1" fill="#f43f5e"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <g id="coinstack">
+      <path d="M -105 0 L -105 132 A 105 30 0 0 0 105 132 L 105 0 Z"
+            fill="#383838" stroke="#ffffff" stroke-width="22" stroke-linejoin="round"/>
+      <ellipse cx="0" cy="0" rx="105" ry="30"
+               fill="#383838" stroke="#ffffff" stroke-width="22"/>
+      <path d="M -105 44 A 105 30 0 0 0 105 44" fill="none"
+            stroke="#ffffff" stroke-width="22" stroke-linecap="round"/>
+      <path d="M -105 88 A 105 30 0 0 0 105 88" fill="none"
+            stroke="#ffffff" stroke-width="22" stroke-linecap="round"/>
+    </g>
+  </defs>
+  <rect width="512" height="512" fill="#383838"/>
+  <use href="#coinstack" transform="translate(205 185)"/>
+  <use href="#coinstack" transform="translate(300 225)"/>
 </svg>
-

@@ -21,7 +21,7 @@ for (const [name, size, padded] of targets) {
     const offset = Math.round((size - inner) / 2);
     const icon = await sharp(src).resize(inner, inner).png().toBuffer();
     await sharp({
-      create: { width: size, height: size, channels: 4, background: '#1e293b' },
+      create: { width: size, height: size, channels: 4, background: '#383838' },
     })
       .composite([{ input: icon, top: offset, left: offset }])
       .png()
