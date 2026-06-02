@@ -105,6 +105,10 @@ export default function App() {
         .nav-brand svg { color: var(--color-accent-primary); }
         .nav-settings-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: transparent; border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-secondary); cursor: pointer; transition: all var(--transition-fast); }
         .nav-settings-btn:hover { background: var(--color-bg-hover); border-color: var(--color-accent-primary); color: var(--color-accent-primary); }
+        @media (max-width: 640px) {
+          .nav { padding: 12px 14px; }
+          .nav-brand { font-size: 0.95rem; gap: 8px; }
+        }
       `}</style>
     </>
   );

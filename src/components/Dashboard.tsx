@@ -300,6 +300,26 @@ export function Dashboard({
           .main-summary-value { font-size: 3.5rem; }
           .dashboard-grid { grid-template-columns: 1fr; gap: 32px; }
         }
+
+        /* スマホ縦画面向けの最適化 */
+        @media (max-width: 640px) {
+          .dashboard { padding: 20px 12px; }
+          .dashboard-header { margin-bottom: 24px; gap: 14px; align-items: stretch; }
+          .dashboard-title { font-size: 1.5rem; }
+          .dashboard-actions { width: 100%; gap: 10px; }
+          .dashboard-actions .btn { flex: 1; justify-content: center; padding: 11px 8px; font-size: 0.8rem; }
+          .main-summary-card { padding: 28px 22px; border-radius: var(--radius-lg); }
+          .main-summary-content { gap: 16px; }
+          .main-summary-value { font-size: 2.4rem; }
+          .currency-symbol { font-size: 1.4rem; }
+          .main-summary-stats { margin-top: 16px; }
+          .main-summary-decoration { display: none; }
+          .section-margin { margin-top: 24px; }
+          .section-margin-top { margin-top: 20px; }
+          .section-margin-large { margin-top: 36px; }
+          .dashboard-grid { gap: 20px; }
+          .month-selector-container { margin-bottom: 24px; }
+        }
       `}</style>
     </div>
   );

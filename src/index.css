@@ -139,6 +139,12 @@ h1, h2, h3, h4, .amount {
   animation: fadeIn 0.6s ease forwards;
 }
 
+/* スマホ縦画面向けのカード調整 */
+@media (max-width: 640px) {
+  .card { padding: 18px 16px; border-radius: var(--radius-lg); }
+  .card-title { font-size: 1rem; margin-bottom: 16px; }
+}
+
 /* PDF/印刷用設定（変更なし） */
 @media print {
   body { background: white; }
