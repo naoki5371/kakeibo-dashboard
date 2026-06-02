@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 20px; color: #1a1a1a; }
+    h3 { margin: 0 0 12px; font-size: 15px; }
+    p { font-size: 12px; color: #555; margin: 0 0 16px; line-height: 1.6; }
+    input[type=file] { font-size: 13px; width: 100%; margin-bottom: 16px; }
+    button { background: #334155; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    #status { font-size: 12px; margin-top: 14px; white-space: pre-wrap; line-height: 1.6; }
+    .ok { color: #0a7f3f; }
+    .err { color: #c0392b; }
+  </style>
+</head>
+<body>
+  <h3>カード・銀行のCSVを取り込む</h3>
+  <p>イオン明細／銀行履歴／PayPay明細のCSVを選んでください（複数選択OK）。<br>
+     種類は自動判定します。既に入力済みの分は自動でスキップ／保留に回します。</p>
+  <input type="file" id="files" accept=".csv" multiple>
+  <button id="go" onclick="run()">取り込む</button>
+  <div id="status"></div>
+
+  <script>
+    function run() {
+      var input = document.getElementById('files');
+      var files = input.files;
+      if (!files.length) { setStatus('CSVを選んでください。', 'err'); return; }
+      document.getElementById('go').disabled = true;
+      setStatus('処理中…');
+      var results = [];
+      var i = 0;
+      function next() {
+        if (i >= files.length) {
+          setStatus(results.join('\n──────────\n') + '\n\n完了しました。', 'ok');
+          document.getElementById('go').disabled = false;
+          return;
+        }
+        var file = files[i++];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var b64 = e.target.result.split(',')[1]; // dataURL → base64
+          google.script.run
+            .withSuccessHandler(function(msg) { results.push('【' + file.name + '】\n' + msg); next(); })
+            .withFailureHandler(function(err) { results.push('【' + file.name + '】\nエラー: ' + err.message); next(); })
+            .processCsv(b64, file.name);
+        };
+        reader.readAsDataURL(file);
+      }
+      next();
+    }
+    function setStatus(msg, cls) {
+      var el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = cls || '';
+    }
+  </script>
+</body>
+</html>
