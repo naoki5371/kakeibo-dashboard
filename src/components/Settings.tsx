@@ -109,7 +109,7 @@ export function Settings({ settings, onSave, onClose }: SettingsProps) {
         </form>
 
         <style>{`
-          .settings-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease; }
+          .settings-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.3); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease; }
           .settings-modal { width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease; }
           .settings-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--color-border); }
           .settings-title { display: flex; align-items: center; gap: 12px; }

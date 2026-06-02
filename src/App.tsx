@@ -100,7 +100,7 @@ export default function App() {
       )}
 
       <style>{`
-        .nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--color-border); box-shadow: var(--shadow-sm); }
+        .nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(255, 255, 255, 0.97); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid var(--color-border); box-shadow: var(--shadow-sm); }
         .nav-brand { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 600; color: var(--color-text-primary); }
         .nav-brand svg { color: var(--color-accent-primary); }
         .nav-settings-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: transparent; border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-secondary); cursor: pointer; transition: all var(--transition-fast); }

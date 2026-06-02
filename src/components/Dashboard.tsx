@@ -304,7 +304,9 @@ export function Dashboard({
         /* スマホ縦画面向けの最適化 */
         @media (max-width: 640px) {
           .dashboard { padding: 20px 12px; }
-          .dashboard-header { margin-bottom: 24px; gap: 14px; align-items: stretch; }
+          .dashboard-header { margin-bottom: 20px; gap: 14px; align-items: stretch; }
+          /* 上部の固定ナビと見出しが重複するため、見出しは非表示 */
+          .dashboard-title-section { display: none; }
           .dashboard-title { font-size: 1.5rem; }
           .dashboard-actions { width: 100%; gap: 10px; }
           .dashboard-actions .btn { flex: 1; justify-content: center; padding: 11px 8px; font-size: 0.8rem; }
