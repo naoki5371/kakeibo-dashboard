@@ -40,6 +40,7 @@ const CONFIG = {
   SHEET: {
     RULES: '取込ルール',       // キーワード → カテゴリ
     EXCLUDE: '除外ルール',     // 銀行摘要の除外キーワード
+    SKIP: '取込しない店',       // 手入力する店（全CSVの店名で除外）
     LEDGER: '取込済み台帳',     // 指紋
     PENDING: '保留',           // 要確認（承認待ち）
     EXLOG: '除外ログ',         // 除外した行の記録（取りこぼし監査用）
@@ -57,6 +58,7 @@ function onOpen() {
     .addItem('定期費を今月分追加', 'addMonthlyFixed')
     .addSeparator()
     .addItem('初期セットアップ（シート作成）', 'setup')
+    .addItem('取込分をリセット（やり直し用）', 'resetImports')
     .addToUi();
 }
 
@@ -65,6 +67,7 @@ function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   ensureSheet(ss, CONFIG.SHEET.RULES, ['キーワード（店名に含む）', 'カテゴリ'], seedRules());
   ensureSheet(ss, CONFIG.SHEET.EXCLUDE, ['除外キーワード（銀行摘要に含む）'], seedExcludes());
+  ensureSheet(ss, CONFIG.SHEET.SKIP, ['取込しない店（店名に含む）', 'メモ'], seedSkip());
   ensureSheet(ss, CONFIG.SHEET.LEDGER, ['指紋', '取込日時', 'ソース', '利用日', '店名', '金額']);
   ensureSheet(ss, CONFIG.SHEET.PENDING, ['承認', 'ソース', '利用日', '店名', '金額', 'カテゴリ', '理由', '指紋']);
   ensureSheet(ss, CONFIG.SHEET.EXLOG, ['記録日時', 'ソース', '利用日', '摘要', '金額', '除外理由']);
@@ -235,6 +238,7 @@ function reconcile(records, source) {
   const ledger = readLedgerSet();           // 既取込の指紋
   const existing = buildExistingMultiset(resp); // 既存(手入力含む)の「日付|金額」件数
   const rules = readRules();
+  const skipKw = readSkipKeywords();        // 手入力する店（取込しない）
 
   const toAppend = [];   // 自動追記
   const toPending = [];  // 保留
@@ -245,6 +249,12 @@ function reconcile(records, source) {
   records.forEach(rec => {
     if (rec.kind === 'exclude') {
       toExlog.push([new Date(), rec.source, rec.date, rec.store, rec.amount, rec.reason || '除外']);
+      return;
+    }
+    // 「取込しない店」（手入力する店）に該当 → 取込まず除外ログへ
+    const skipHit = skipKw.find(k => k && rec.store.indexOf(k) >= 0);
+    if (skipHit) {
+      toExlog.push([new Date(), rec.source, rec.date, rec.store, rec.amount, '取込しない店:' + skipHit]);
       return;
     }
     const base = [rec.source, rec.date, rec.amount, rec.store].join('|');
@@ -344,6 +354,44 @@ function addMonthlyFixed() {
   SpreadsheetApp.getUi().alert(append.length + ' 件の定期費を追記しました。');
 }
 
+// 取込分をリセット（やり直し用）。自動取込の行を削除し、台帳・保留・除外ログをクリア。手入力分は残す。
+function resetImports() {
+  const ui = SpreadsheetApp.getUi();
+  const res = ui.alert(
+    '取込分のリセット',
+    '「自動取込」で追加した行をすべて削除し、取込済み台帳・保留・除外ログをクリアします。\n手入力分（タグなし）は残ります。よろしいですか？',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (res !== ui.Button.OK) return;
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const resp = ss.getSheetByName(CONFIG.RESPONSE_SHEET);
+  const tagCol = CONFIG.COL.TAG + 1;
+  const last = resp.getLastRow();
+  let removed = 0;
+  if (last >= 2) {
+    const tags = resp.getRange(2, tagCol, last - 1, 1).getValues();
+    // 下から削除（行番号がずれないように）
+    for (let i = tags.length - 1; i >= 0; i--) {
+      if (String(tags[i][0]).indexOf('自動取込') === 0) {
+        resp.deleteRow(i + 2);
+        removed++;
+      }
+    }
+  }
+  clearSheetBody(ss, CONFIG.SHEET.LEDGER);
+  clearSheetBody(ss, CONFIG.SHEET.PENDING);
+  clearSheetBody(ss, CONFIG.SHEET.EXLOG);
+  ui.alert(removed + ' 行の自動取込を削除し、台帳・保留・除外ログをクリアしました。\nスキップ設定を整えてから、もう一度CSVを取り込んでください。');
+}
+
+function clearSheetBody(ss, name) {
+  const sh = ss.getSheetByName(name);
+  if (!sh) return;
+  const last = sh.getLastRow();
+  if (last >= 2) sh.getRange(2, 1, last - 1, sh.getLastColumn()).clearContent();
+}
+
 // ===== 書き込みヘルパ ===========================================
 function appendExpenses(resp, items) {
   if (!items.length) return;
@@ -415,6 +463,13 @@ function readExcludeKeywords() {
   return sh.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0])).filter(Boolean);
 }
 
+function readSkipKeywords() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET.SKIP);
+  const last = sh ? sh.getLastRow() : 0;
+  if (!sh || last < 2) return [];
+  return sh.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0]).trim()).filter(Boolean);
+}
+
 function resolveCategory(store, rules) {
   const s = String(store || '');
   for (const r of rules) { if (s.indexOf(r.kw) >= 0) return r.cat; }
@@ -484,6 +539,13 @@ function seedExcludes() {
     ['イオン'], ['ＡＥＯＮ'],
     ['ＡＴＭ'], ['ATM'], ['カード　セブン'], ['セブン銀行'],
     ['振込'], ['口座振替手数料'],
+  ];
+}
+function seedSkip() {
+  // 手入力するので取込しない店（店名に含む文字列）。全CSV共通で適用。
+  // 例: カタカナ「アマゾン」= マーケットプレイスのみ除外。英字 Amazon（Prime会費/Downloads等）は対象外で残る。
+  return [
+    ['アマゾン', 'Amazonマーケットプレイス＝購入時に手入力するため取込しない'],
   ];
 }
 function seedFixed() {
