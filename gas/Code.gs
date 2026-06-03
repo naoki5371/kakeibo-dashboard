@@ -17,8 +17,8 @@
 
 // ===== 設定 =====================================================
 const CONFIG = {
-  // フォール回答シート（ダッシュボードが読むシート）
-  RESPONSE_SHEET: '家計簿【支出】（回答）',
+  // 回答シート（フォームの送信先＝ダッシュボードが先頭シートとして読むシート）
+  RESPONSE_SHEET: 'フォームの回答 1',
 
   // 回答シートの列インデックス（0始まり）。ダッシュボードの読み取りに合わせる。
   COL: {
@@ -80,7 +80,8 @@ function setup() {
 function ensureSheet(ss, name, header, seedRows) {
   let sh = ss.getSheetByName(name);
   if (!sh) {
-    sh = ss.insertSheet(name);
+    // 末尾に追加（先頭シート＝回答シートの位置を崩さない）
+    sh = ss.insertSheet(name, ss.getNumSheets());
     sh.getRange(1, 1, 1, header.length).setValues([header]).setFontWeight('bold');
     sh.setFrozenRows(1);
     if (seedRows && seedRows.length) {
