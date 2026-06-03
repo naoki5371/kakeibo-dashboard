@@ -228,6 +228,37 @@ export function getRecentTransactions(expenses: ExpenseRecord[], limit: number =
     .map(({ dateStr, item, category, amount, type }) => ({ date: dateStr, item, category, amount, type }));
 }
 
+// 指定月・指定カテゴリの明細（個別の支出行）を取得
+export interface CategoryTransaction {
+  date: string;     // 'MM/dd'
+  fullDate: string; // 'yyyy/MM/dd'
+  item: string;
+  amount: number;
+}
+export function getCategoryTransactions(
+  expenses: ExpenseRecord[],
+  targetMonth: Date,
+  category: string
+): CategoryTransaction[] {
+  const monthStart = startOfMonth(targetMonth);
+  const monthEnd = endOfMonth(targetMonth);
+  return expenses
+    .map(e => ({ date: getExpenseDate(e), e }))
+    .filter(x =>
+      x.date &&
+      x.e.category === category &&
+      x.e.amount > 0 &&
+      isWithinInterval(x.date, { start: monthStart, end: monthEnd })
+    )
+    .sort((a, b) => b.date!.getTime() - a.date!.getTime())
+    .map(x => ({
+      date: format(x.date!, 'MM/dd'),
+      fullDate: format(x.date!, 'yyyy/MM/dd'),
+      item: x.e.item || '(項目なし)',
+      amount: x.e.amount,
+    }));
+}
+
 export function calculateYearlySummary(expenses: ExpenseRecord[], year?: number) {
   const targetYear = year || new Date().getFullYear();
   let totalExpense = 0;

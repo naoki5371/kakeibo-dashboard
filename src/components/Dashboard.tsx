@@ -14,8 +14,10 @@ import {
   calculateYearlySummary,
   calculateYearlyCategoryData,
   calculateCategoryMonthlyTable,
+  getCategoryTransactions,
 } from '../utils/dataProcessor';
 import { MonthlyChart } from './MonthlyChart';
+import { CategoryDetailModal } from './CategoryDetailModal';
 import { CategoryPieChart } from './CategoryPieChart';
 import { YearlySummary } from './YearlySummary';
 import { MonthComparison } from './MonthComparison';
@@ -43,6 +45,7 @@ export function Dashboard({
   const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
   const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
   const [isExporting, setIsExporting] = useState(false);
+  const [detail, setDetail] = useState<{ category: string; color: string } | null>(null);
 
   // PDF出力処理
   const handleExportPDF = async () => {
@@ -96,6 +99,10 @@ export function Dashboard({
   const yearlySummary = useMemo(() => calculateYearlySummary(expenses, selectedYear), [expenses, selectedYear]);
   const yearlyCategoryData = useMemo(() => calculateYearlyCategoryData(expenses, selectedYear), [expenses, selectedYear]);
   const categoryMonthlyTableData = useMemo(() => calculateCategoryMonthlyTable(expenses, selectedYear), [expenses, selectedYear]);
+  const detailTransactions = useMemo(
+    () => (detail ? getCategoryTransactions(expenses, selectedMonth, detail.category) : []),
+    [detail, expenses, selectedMonth]
+  );
 
   const selectedMonthSummary = useMemo(() => {
     const monthKey = format(selectedMonth, 'M月', { locale: ja });
@@ -167,8 +174,8 @@ export function Dashboard({
 
         <div className="dashboard-grid section-margin-large">
           {/* 2. 月間詳細 2カラム */}
-          <div className="animate-fade-in"><CategoryPieChart data={categoryData} title={`${monthLabel}のカテゴリ別支出`} /></div>
-          <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP10`} /></div>
+          <div className="animate-fade-in"><CategoryPieChart data={categoryData} title={`${monthLabel}のカテゴリ別支出`} onCategoryClick={(category, color) => setDetail({ category, color })} /></div>
+          <div className="animate-fade-in"><SpendingRanking data={spendingRanking} title={`${monthLabel}の支出TOP10`} onCategoryClick={(category, color) => setDetail({ category, color })} /></div>
 
           {/* 3. 比較・履歴 2カラム */}
           <div className="animate-fade-in section-margin-top">
@@ -191,6 +198,16 @@ export function Dashboard({
         {/* 6. 一覧表 1カラム */}
         <div className="section-margin-large"><CategoryMonthlyTable data={categoryMonthlyTableData} year={selectedYear} /></div>
       </div>
+
+      {detail && (
+        <CategoryDetailModal
+          category={detail.category}
+          color={detail.color}
+          monthLabel={format(selectedMonth, 'yyyy年M月', { locale: ja })}
+          transactions={detailTransactions}
+          onClose={() => setDetail(null)}
+        />
+      )}
 
       <style>{`
         .dashboard { max-width: 1400px; margin: 0 auto; padding: 48px 32px; }

@@ -1,11 +1,12 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { PieChart as PieChartIcon } from 'lucide-react';
+import { PieChart as PieChartIcon, ChevronRight } from 'lucide-react';
 import type { CategoryData } from '../types';
 import { formatCurrency } from '../utils/dataProcessor';
 
 interface CategoryPieChartProps {
   data: CategoryData[];
   title?: string;
+  onCategoryClick?: (category: string, color: string) => void;
 }
 
 interface TooltipPayload {
@@ -51,7 +52,7 @@ interface ChartDataItem {
   [key: string]: string | number;
 }
 
-export function CategoryPieChart({ data, title = 'カテゴリ別支出' }: CategoryPieChartProps) {
+export function CategoryPieChart({ data, title = 'カテゴリ別支出', onCategoryClick }: CategoryPieChartProps) {
   const total = data.reduce((sum, item) => sum + item.amount, 0);
   
   const chartData: ChartDataItem[] = data
@@ -95,18 +96,28 @@ export function CategoryPieChart({ data, title = 'カテゴリ別支出' }: Cate
 
         <div className="category-list-container">
           <div className="category-full-list">
-            {data.map((item, index) => (
-              <div key={index} className="category-list-item">
-                <div className="category-info">
-                  <span className="category-dot" style={{ background: item.color }} />
-                  <span className="category-name">{item.category}</span>
+            {data.map((item, index) => {
+              const clickable = !!onCategoryClick && item.amount > 0;
+              return (
+                <div
+                  key={index}
+                  className={`category-list-item${clickable ? ' clickable' : ''}`}
+                  onClick={clickable ? () => onCategoryClick!(item.category, item.color) : undefined}
+                  role={clickable ? 'button' : undefined}
+                  tabIndex={clickable ? 0 : undefined}
+                >
+                  <div className="category-info">
+                    <span className="category-dot" style={{ background: item.color }} />
+                    <span className="category-name">{item.category}</span>
+                  </div>
+                  <div className="category-values">
+                    <span className="category-amount">{formatCurrency(item.amount)}</span>
+                    <span className="category-percent">{item.percentage.toFixed(1)}%</span>
+                    {clickable && <ChevronRight className="category-chevron" size={16} />}
+                  </div>
                 </div>
-                <div className="category-values">
-                  <span className="category-amount">{formatCurrency(item.amount)}</span>
-                  <span className="category-percent">{item.percentage.toFixed(1)}%</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -128,6 +139,9 @@ export function CategoryPieChart({ data, title = 'カテゴリ別支出' }: Cate
 
         .category-list-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; transition: opacity 0.2s ease; }
         .category-list-item.zero-amount { opacity: 0.3; }
+        .category-list-item.clickable { cursor: pointer; margin: 0 -10px; padding: 8px 10px; border-radius: var(--radius-sm); transition: background var(--transition-fast); }
+        .category-list-item.clickable:hover { background: var(--color-bg-primary); }
+        .category-chevron { color: var(--color-text-muted); flex-shrink: 0; }
         
         .category-info { display: flex; align-items: center; gap: 12px; }
         .category-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }

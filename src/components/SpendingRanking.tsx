@@ -5,9 +5,10 @@ import { formatCurrency } from '../utils/dataProcessor';
 interface SpendingRankingProps {
   data: CategoryData[];
   title?: string;
+  onCategoryClick?: (category: string, color: string) => void;
 }
 
-export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRankingProps) {
+export function SpendingRanking({ data, title = '支出TOP10', onCategoryClick }: SpendingRankingProps) {
   return (
     <div className="card spending-ranking">
       <h3 className="card-title">
@@ -19,8 +20,16 @@ export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRanking
         {data.length === 0 ? (
           <div className="no-data">データがありません</div>
         ) : (
-          data.slice(0, 10).map((item, index) => (
-            <div key={index} className="ranking-item">
+          data.slice(0, 10).map((item, index) => {
+            const clickable = !!onCategoryClick && item.amount > 0;
+            return (
+            <div
+              key={index}
+              className={`ranking-item${clickable ? ' clickable' : ''}`}
+              onClick={clickable ? () => onCategoryClick!(item.category, '#fb7185') : undefined}
+              role={clickable ? 'button' : undefined}
+              tabIndex={clickable ? 0 : undefined}
+            >
               <div className="ranking-info">
                 <div className="ranking-header">
                   <div className="ranking-main">
@@ -42,7 +51,8 @@ export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRanking
                 <div className="ranking-percent-text">{item.percentage.toFixed(1)}%</div>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -50,6 +60,8 @@ export function SpendingRanking({ data, title = '支出TOP10' }: SpendingRanking
         .spending-ranking { min-height: auto; }
         .ranking-list { display: flex; flex-direction: column; gap: 24px; }
         .ranking-item { display: flex; flex-direction: column; }
+        .ranking-item.clickable { cursor: pointer; margin: 0 -12px; padding: 12px; border-radius: var(--radius-md); transition: background var(--transition-fast); }
+        .ranking-item.clickable:hover { background: var(--color-bg-primary); }
         
         .ranking-info { display: flex; flex-direction: column; gap: 8px; }
         .ranking-header { display: flex; justify-content: space-between; align-items: baseline; }
