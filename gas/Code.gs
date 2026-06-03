@@ -353,7 +353,7 @@ function appendExpenses(resp, items) {
     row[CONFIG.COL.ITEM] = rec.store;
     row[CONFIG.COL.CATEGORY] = cat;
     row[CONFIG.COL.AMOUNT] = rec.amount;
-    row[CONFIG.COL.EXPENSE_DATE] = rec.date; // 'yyyy/MM/dd'
+    row[CONFIG.COL.EXPENSE_DATE] = ymdToDate(rec.date); // 支出日（Date型）
     row[CONFIG.COL.TAG] = '自動取込:' + rec.source;
     return row;
   });
@@ -450,6 +450,12 @@ function normalizeYmd(v) {
     return Utilities.formatDate(v, 'Asia/Tokyo', 'yyyy/MM/dd');
   }
   return toYmd(v);
+}
+// "yyyy/MM/dd"（文字列） or Date → Dateオブジェクト（支出日セル用）
+function ymdToDate(v) {
+  if (Object.prototype.toString.call(v) === '[object Date]') return v;
+  const m = String(v || '').match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : v;
 }
 
 // ===== 初期シードデータ =========================================
